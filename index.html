@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Veer Pharma - Vessel Auto Calculator v8</title>
+  <title>Veer Pharma - Vessel Auto Calculator</title>
   <style>
     :root{
       --bg:#f5f7fa; --card:#ffffff; --ink:#111827; --muted:#6b7280; --line:#d1d5db;
@@ -66,8 +66,8 @@
 <header>
   <div class="header-row">
     <div>
-      <h1>VEER PHARMA — Jacketed Vessel Auto Calculator + Full Material List</h1>
-      <div class="sub">Updated: Pipe, Circle, Patti, Top Cover, Legs, Shells — सबका detail cutting list + kg + costing</div>
+      <h1>VEER PHARMA — Jacketed Vessel Calculator + Engineering Drawing</h1>
+      <div class="sub">Complete Material Cutting List | Auto Weight & Cost | Live Drawing</div>
     </div>
     <div class="actions">
       <button class="primary" onclick="window.print()">Print / Save PDF</button>
@@ -92,7 +92,6 @@
 
         <label>Inner Bottom Dish Depth</label><input id="dishDepth" type="number" step="1" value="150"><span class="unit">mm</span>
         <label>Leg Height</label><input id="legH" type="number" step="1" value="450"><span class="unit">mm</span>
-        <label>Top Flat Inset (drawing)</label><input id="topInset" type="number" step="1" value="18"><span class="unit">px visual</span>
 
         <label>Inner Thickness</label><input id="innerT" type="number" step="0.1" value="3"><span class="unit">mm</span>
         <label>Jacket Thickness</label><input id="jacketT" type="number" step="0.1" value="3"><span class="unit">mm</span>
@@ -174,13 +173,11 @@
         <div class="kpi"><small>Total Material Wt</small><strong id="kTotalWt">–</strong></div>
         <div class="kpi"><small>Final Price</small><strong id="kFinal">–</strong></div>
       </div>
-
-      <p class="note"><b>Updated:</b> अब shells के साथ <b>pipe, circle plate, patti/strip, top cover</b> भी material list में आएँगे। हर item का size, thickness, qty, weight/pc, total weight और material cost automatic निकलेगा। Gap strip की width outer-gap के हिसाब से auto आती है.</p>
     </section>
 
     <section>
       <div class="card">
-        <h2>Live Drawing — Full Material Logic</h2>
+        <h2>Live Engineering Drawing</h2>
         <div class="legend">
           <div class="linekey"><span class="line"></span>Inner Shell</div>
           <div class="linekey"><span class="line dash"></span>Jacket Shell</div>
@@ -190,7 +187,7 @@
       </div>
 
       <div class="card" style="margin-top:14px">
-        <h2>Complete Cutting Material List — Auto</h2>
+        <h2>Complete Cutting Material List</h2>
         <div class="table-wrap">
           <table>
             <thead>
@@ -220,13 +217,6 @@
             </tfoot>
           </table>
         </div>
-        <p class="note">
-          <b>Weight Formula:</b><br>
-          Shell = π × D × H × T × Density ÷ 1,000,000,000<br>
-          Circle / Cover = (π/4) × D² × T × Density ÷ 1,000,000,000<br>
-          Flat Patti = L × W × T × Density ÷ 1,000,000,000<br>
-          Pipe = (π/4) × (OD² − ID²) × Length × Density ÷ 1,000,000,000
-        </p>
       </div>
 
       <div class="card" style="margin-top:14px">
@@ -246,16 +236,15 @@
             </tbody>
           </table>
         </div>
-        <div class="smallnote">Note: Top cover diameter, circle diameter, patti length/width और pipe sizes editable हैं. आप अपनी fabrication logic के हिसाब से इन्हें बदल सकते हैं.</div>
       </div>
     </section>
   </div>
 </main>
-<footer>VEER PHARMA • Browser-based single file • Works in PC and Mobile browser.</footer>
+<footer>VEER PHARMA • Browser-based single file calculator • PC & Mobile compatible</footer>
 
 <script>
   const ids = [
-  'innerD','jacketD','outerD','innerH','jacketClear','outerClear','dishDepth','legH','topInset',
+  'innerD','jacketD','outerD','innerH','jacketClear','outerClear','dishDepth','legH',
   'innerT','jacketT','outerT','innerMat','jacketMat','outerMat',
   'legPipeOD','legPipeT','legPipeQty','legPipeMat',
   'topCoverD','topCoverT','topCoverQty','topCoverMat',
@@ -296,13 +285,11 @@
     const jDepth=dish+gap1;
     const oDepth=jDepth+gap2;
 
-    // auto-use outer gap as strip width
     const autoGapStripW = gap2;
     const autoGapStripL = Math.PI * outerD;
 
     const items = [];
 
-    // shell items
     const shells = [
       {name:'Inner Shell', d:innerD, h:innerH, t:n('innerT'), rho:n('innerMat'), grade:materialName('innerMat'), qty:1},
       {name:'Jacket Shell', d:jacketD, h:Math.max(0,innerH-jacketClear), t:n('jacketT'), rho:n('jacketMat'), grade:materialName('jacketMat'), qty:1},
@@ -321,7 +308,6 @@
       });
     });
 
-    // leg pipe
     const legPipeRho = n('legPipeMat');
     const legPipeRate = matRateByDensity(legPipeRho);
     const legPipeWtPc = wtPipe(n('legPipeOD'), n('legPipeT'), n('legH'), legPipeRho);
@@ -332,7 +318,6 @@
       wtpc:legPipeWtPc, totalWt:legPipeWtPc*n('legPipeQty'), rate:legPipeRate, cost:legPipeWtPc*n('legPipeQty')*legPipeRate
     });
 
-    // top cover
     const topCoverRho = n('topCoverMat');
     const topCoverRate = matRateByDensity(topCoverRho);
     const topCoverWtPc = wtCircle(n('topCoverD'), n('topCoverT'), topCoverRho);
@@ -343,7 +328,6 @@
       wtpc:topCoverWtPc, totalWt:topCoverWtPc*n('topCoverQty'), rate:topCoverRate, cost:topCoverWtPc*n('topCoverQty')*topCoverRate
     });
 
-    // circle plate
     const circleRho = n('circleMat');
     const circleRate = matRateByDensity(circleRho);
     const circleWtPc = wtCircle(n('circleD'), n('circleT'), circleRho);
@@ -354,7 +338,6 @@
       wtpc:circleWtPc, totalWt:circleWtPc*n('circleQty'), rate:circleRate, cost:circleWtPc*n('circleQty')*circleRate
     });
 
-    // patti / strip
     const pattiRho = n('pattiMat');
     const pattiRate = matRateByDensity(pattiRho);
     const pattiWtPc = wtRect(n('pattiL'), n('pattiW'), n('pattiT'), pattiRho);
@@ -365,7 +348,6 @@
       wtpc:pattiWtPc, totalWt:pattiWtPc*n('pattiQty'), rate:pattiRate, cost:pattiWtPc*n('pattiQty')*pattiRate
     });
 
-    // gap strip, auto width from gap2
     const gapStripRho = n('gapStripMat');
     const gapStripRate = matRateByDensity(gapStripRho);
     const gapStripWtPc = wtRect(autoGapStripL, autoGapStripW, n('outerT'), gapStripRho);
@@ -432,156 +414,193 @@
     drawVessel(m);
   }
 
-  function pathShellFlat(cx, r, yTop, hStraight, depth, cls, cap){
-    const yB = yTop + hStraight;
-    const c = Math.max(8, cap);
-    return `<path d="M ${cx-r+c} ${yTop}
-                     L ${cx-r} ${yTop}
-                     L ${cx-r} ${yB}
-                     A ${r} ${depth} 0 0 0 ${cx} ${yB+depth}
-                     A ${r} ${depth} 0 0 0 ${cx+r} ${yB}
-                     L ${cx+r} ${yTop}
-                     L ${cx+r-c} ${yTop}" class="${cls}" fill="none"/>`;
-  }
-  function pipeLeg(xCenter, yTop, yBottom){
-    const w=16, baseW=40;
-    return `
-      <rect x="${xCenter-w/2}" y="${yTop}" width="${w}" height="${yBottom-yTop}" fill="white" stroke="#111" stroke-width="3"/>
-      <line x1="${xCenter}" y1="${yTop+3}" x2="${xCenter}" y2="${yBottom-3}" stroke="#9ca3af" stroke-width="1"/>
-      <line x1="${xCenter-baseW/2}" y1="${yBottom}" x2="${xCenter+baseW/2}" y2="${yBottom}" stroke="#111" stroke-width="4"/>
-      <line x1="${xCenter-baseW/2+8}" y1="${yBottom-6}" x2="${xCenter+baseW/2-8}" y2="${yBottom-6}" stroke="#111" stroke-width="2"/>
-    `;
-  }
-
   function drawVessel(m){
     const innerD=n('innerD'), jacketD=n('jacketD'), outerD=n('outerD');
     const innerH=n('innerH'), jacketClear=n('jacketClear'), outerClear=n('outerClear');
     const legH=n('legH');
-    const inset=n('topInset');
 
     const maxD=Math.max(innerD,jacketD,outerD,1);
     const maxBottom=Math.max(m.dish,m.jDepth,m.oDepth);
     const maxH=Math.max(innerH+maxBottom+legH,1);
-    const scale=Math.min(440/maxD, 470/maxH);
+    const scale=Math.min(250/maxD, 300/maxH);
 
-    const cx=305, topY=100;
+    const cx=250, topY=100;
     const pxD=d=>d*scale, pxH=h=>h*scale;
     const rI=pxD(innerD)/2, rJ=pxD(jacketD)/2, rO=pxD(outerD)/2;
     const hI=pxH(innerH), hJ=pxH(Math.max(0,innerH-jacketClear)), hO=pxH(Math.max(0,innerH-outerClear));
     const dI=pxH(m.dish), dJ=pxH(m.jDepth), dO=pxH(m.oDepth);
+
     const yBI=topY+hI, yBJ=topY+pxH(jacketClear)+hJ, yBO=topY+pxH(outerClear)+hO;
 
-    const legSideRatio = 0.72;
-    const legLeftX = cx - rJ*legSideRatio;
-    const legRightX = cx + rJ*legSideRatio;
-    const legArcRise = dJ * Math.sqrt(Math.max(0, 1 - legSideRatio*legSideRatio));
-    const legTopY = yBJ + legArcRise;
-    const legBottomY = legTopY + pxH(legH);
+    const legW=24, legH_px=pxH(legH);
+    const legLeftX = cx - rJ*0.68;
+    const legRightX = cx + rJ*0.68;
+    const legTopY = yBJ + dJ*0.72;
+    const legBottomY = legTopY + legH_px;
 
-    const tvx=735, tvy=180;
-    const tscale=Math.min(150/maxD,0.26);
+    // TOP VIEW
+    const tvx=750, tvy=150;
+    const tscale=Math.min(120/maxD,0.22);
     const tvI=innerD*tscale/2, tvJ=jacketD*tscale/2, tvO=outerD*tscale/2;
 
-    const stripY = topY + pxH(Math.max(outerClear, jacketClear) + 120);
-    const stripThk = 8;
-    const stripWidth = Math.max(0, rO-rJ);
-    const stripLeftX = cx-rO;
-    const stripRightX = cx+rJ;
+    // Internal baffles (4 compartments)
+    let baffles='';
+    const nBaffles=4;
+    for(let i=1; i<=nBaffles; i++){
+      const y=topY + (hI/(nBaffles+1))*i;
+      baffles+=`<line x1="${cx-rI}" y1="${y}" x2="${cx+rI}" y2="${y}" stroke="#111" stroke-width="1.1" opacity="0.65"/>`;
+    }
 
-    const svg = document.getElementById('drawing');
-    svg.innerHTML = `
+    // Impeller blades (8 blades)
+    let impeller='';
+    const nBlades=8;
+    for(let i=0; i<nBlades; i++){
+      const angle=(i/nBlades)*Math.PI*2;
+      const r1=rI*0.35;
+      const r2=rI*0.65;
+      const x1=cx+Math.cos(angle)*r1;
+      const y1=topY+Math.sin(angle)*r1;
+      const x2=cx+Math.cos(angle)*r2;
+      const y2=topY+Math.sin(angle)*r2;
+      impeller+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#111" stroke-width="1.7"/>`;
+    }
+
+    const svg=document.getElementById('drawing');
+    svg.innerHTML=`
     <defs>
       <style>
-        .inner{stroke:#111;stroke-width:2.2}
-        .jacket{stroke:#111;stroke-width:2.2;stroke-dasharray:10 6}
-        .outer{stroke:#111;stroke-width:4}
-        .dim{stroke:#475569;stroke-width:1;fill:none}
-        .txt{font: 14px Arial;fill:#111}
-        .small{font: 12px Arial;fill:#374151}
-        .title{font: bold 18px Arial;fill:#111}
-        .center{stroke:#9ca3af;stroke-width:1;stroke-dasharray:6 5}
-        .guide{stroke:#94a3b8;stroke-width:1}
-        .strip{fill:#e5e7eb;stroke:#111;stroke-width:1.5}
-        .green{fill:#0f766e}
-        .blue{fill:#1d4ed8}
+        .inner{stroke:#111;stroke-width:2.4;fill:none}
+        .jacket{stroke:#111;stroke-width:2.4;fill:none;stroke-dasharray:10 6}
+        .outer{stroke:#111;stroke-width:4.2;fill:none}
+        .dim{stroke:#555;stroke-width:1.1;fill:none}
+        .txt{font:13px Arial;fill:#111;font-weight:600}
+        .small{font:11px Arial;fill:#333}
+        .title{font:bold 16px Arial;fill:#111}
+        .center{stroke:#ddd;stroke-width:1;stroke-dasharray:7 5}
+        .leg-rect{stroke:#111;stroke-width:2.2;fill:white}
+        .leg-base{stroke:#111;stroke-width:2.5;fill:#111}
+        .valve-circle{stroke:#333;stroke-width:1.8;fill:white}
+        .motor-rect{stroke:#111;stroke-width:1.8;fill:none}
+        .motor-fin{stroke:#111;stroke-width:1.4}
       </style>
     </defs>
 
-    <text x="26" y="32" class="title">FRONT VIEW</text>
-    <line x1="${cx}" y1="55" x2="${cx}" y2="${legBottomY+25}" class="center"/>
+    <text x="35" y="35" class="title">FRONT ELEVATION</text>
+    <line x1="${cx}" y1="50" x2="${cx}" y2="${legBottomY+25}" class="center"/>
 
-    ${pathShellFlat(cx, rI, topY, hI, dI, 'inner', 0)}
-    ${pathShellFlat(cx, rJ, topY+pxH(jacketClear), hJ, dJ, 'jacket', inset)}
-    ${pathShellFlat(cx, rO, topY+pxH(outerClear), hO, dO, 'outer', inset)}
+    <!-- Three shells with dished bottom -->
+    <path d="M ${cx-rI} ${topY} L ${cx-rI} ${yBI} Q ${cx-rI} ${yBI+dI*0.65}, ${cx} ${yBI+dI} Q ${cx+rI} ${yBI+dI*0.65}, ${cx+rI} ${yBI} L ${cx+rI} ${topY}" class="inner"/>
+    <path d="M ${cx-rJ} ${topY+pxH(jacketClear)} L ${cx-rJ} ${yBJ} Q ${cx-rJ} ${yBJ+dJ*0.65}, ${cx} ${yBJ+dJ} Q ${cx+rJ} ${yBJ+dJ*0.65}, ${cx+rJ} ${yBJ} L ${cx+rJ} ${topY+pxH(jacketClear)}" class="jacket"/>
+    <path d="M ${cx-rO} ${topY+pxH(outerClear)} L ${cx-rO} ${yBO} Q ${cx-rO} ${yBO+dO*0.65}, ${cx} ${yBO+dO} Q ${cx+rO} ${yBO+dO*0.65}, ${cx+rO} ${yBO} L ${cx+rO} ${topY+pxH(outerClear)}" class="outer"/>
 
-    ${stripWidth > 0 ? `
-      <rect x="${stripLeftX}" y="${stripY}" width="${stripWidth}" height="${stripThk}" class="strip"/>
-      <rect x="${stripRightX}" y="${stripY}" width="${stripWidth}" height="${stripThk}" class="strip"/>
-      <text x="${stripLeftX + stripWidth/2}" y="${stripY-8}" text-anchor="middle" class="small green">Strip = ${num(m.gap2,0)} mm</text>
-      <text x="${stripRightX + stripWidth/2}" y="${stripY-8}" text-anchor="middle" class="small green">Strip = ${num(m.gap2,0)} mm</text>
-    ` : ''}
+    <!-- Internal baffles -->
+    ${baffles}
 
-    <line x1="${cx-rO-22}" y1="${topY-5}" x2="${cx+rO+22}" y2="${topY-5}" stroke="#111" stroke-width="4"/>
-    <rect x="${cx-34}" y="${topY-80}" width="68" height="65" rx="8" fill="none" stroke="#111" stroke-width="2"/>
-    <line x1="${cx}" y1="${topY-14}" x2="${cx}" y2="${topY+48}" stroke="#111" stroke-width="2"/>
-    <text x="${cx+50}" y="${topY-50}" class="txt">Top Motor</text>
+    <!-- Stirrer shaft -->
+    <line x1="${cx}" y1="${topY-40}" x2="${cx}" y2="${yBI+dI}" stroke="#111" stroke-width="2.2"/>
 
-    ${pipeLeg(legLeftX, legTopY, legBottomY)}
-    ${pipeLeg(legRightX, legTopY, legBottomY)}
+    <!-- Impeller blades -->
+    ${impeller}
 
-    <line x1="${cx-rI}" y1="${topY+120}" x2="${cx+rI}" y2="${topY+120}" class="dim"/>
-    <text x="${cx}" y="${topY+113}" text-anchor="middle" class="txt">Ø ${innerD}</text>
+    <!-- Top flat cover -->
+    <line x1="${cx-rO-20}" y1="${topY-2}" x2="${cx+rO+20}" y2="${topY-2}" stroke="#111" stroke-width="4"/>
+    <rect x="${cx-32}" y="${topY-72}" width="64" height="68" rx="9" class="motor-rect" stroke-width="1.8"/>
 
-    <line x1="${cx-rJ}" y1="${topY+170}" x2="${cx+rJ}" y2="${topY+170}" class="dim"/>
-    <text x="${cx}" y="${topY+163}" text-anchor="middle" class="txt">Ø ${jacketD}</text>
+    <!-- Motor with cooling fins -->
+    <ellipse cx="${cx}" cy="${topY-36}" rx="30" ry="24" class="motor-rect" stroke-width="1.8"/>
+    <line x1="${cx-20}" y1="${topY-52}" x2="${cx-20}" y2="${topY-20}" class="motor-fin"/>
+    <line x1="${cx-10}" y1="${topY-57}" x2="${cx-10}" y2="${topY-15}" class="motor-fin"/>
+    <line x1="${cx}" y1="${topY-59}" x2="${cx}" y2="${topY-13}" class="motor-fin"/>
+    <line x1="${cx+10}" y1="${topY-57}" x2="${cx+10}" y2="${topY-15}" class="motor-fin"/>
+    <line x1="${cx+20}" y1="${topY-52}" x2="${cx+20}" y2="${topY-20}" class="motor-fin"/>
+    <text x="${cx+45}" y="${topY-32}" class="small">Motor</text>
 
-    <line x1="${cx-rO}" y1="${topY+220}" x2="${cx+rO}" y2="${topY+220}" class="dim"/>
-    <text x="${cx}" y="${topY+213}" text-anchor="middle" class="txt">Ø ${outerD}</text>
+    <!-- Side inlet valve -->
+    <circle cx="${cx-rJ-10}" cy="${topY+hJ*0.28}" r="6" class="valve-circle"/>
+    <line x1="${cx-rJ-10}" y1="${topY+hJ*0.28-7}" x2="${cx-rJ-10}" y2="${topY+hJ*0.28+7}" stroke="#333" stroke-width="1.6"/>
+    <text x="${cx-rJ-45}" y="${topY+hJ*0.28+4}" class="small">Inlet</text>
 
-    <text x="530" y="120" class="txt">Inner H = ${innerH} mm</text>
-    <text x="530" y="150" class="txt">Jacket top clear = ${jacketClear} mm</text>
-    <text x="530" y="180" class="txt">Outer top clear = ${outerClear} mm</text>
-    <text x="530" y="210" class="txt">Inner bottom depth = ${m.dish} mm</text>
-    <text x="530" y="240" class="txt">Leg height = ${legH} mm</text>
+    <!-- Bottom discharge valve -->
+    <circle cx="${cx-rO-10}" cy="${yBI+dI-10}" r="6" class="valve-circle"/>
+    <line x1="${cx-rO-10}" y1="${yBI+dI-10-7}" x2="${cx-rO-10}" y2="${yBI+dI-10+7}" stroke="#333" stroke-width="1.6"/>
+    <text x="${cx-rO-55}" y="${yBI+dI-6}" class="small">Discharge</text>
 
-    <line x1="${cx+rI+14}" y1="${yBI + dI*0.8}" x2="${cx+rJ-14}" y2="${yBI + dI*0.8}" class="guide"/>
-    <text x="${cx+rJ+12}" y="${yBI + dI*0.8 + 5}" class="small blue">Gap = ${num(m.gap1,0)} mm</text>
+    <!-- Support leg columns (rectangular) -->
+    <rect x="${legLeftX-legW/2}" y="${legTopY}" width="${legW}" height="${legH_px}" class="leg-rect"/>
+    <rect x="${legRightX-legW/2}" y="${legTopY}" width="${legW}" height="${legH_px}" class="leg-rect"/>
 
-    <line x1="${cx+rJ+14}" y1="${yBJ + dJ*0.82}" x2="${cx+rO-14}" y2="${yBJ + dJ*0.82}" class="guide"/>
-    <text x="${cx+rO+12}" y="${yBJ + dJ*0.82 + 5}" class="small green">Gap = ${num(m.gap2,0)} mm</text>
+    <!-- Leg base -->
+    <line x1="${legLeftX-32}" y1="${legBottomY}" x2="${legLeftX+32}" y2="${legBottomY}" class="leg-base"/>
+    <line x1="${legRightX-32}" y1="${legBottomY}" x2="${legRightX+32}" y2="${legBottomY}" class="leg-base"/>
 
-    <rect x="520" y="300" width="420" height="265" rx="8" fill="#f8fafc" stroke="#cbd5e1"/>
-    <text x="540" y="334" class="title">AUTO LOGIC</text>
-    <text x="540" y="366" class="txt">Jacket gap = ( ${jacketD} − ${innerD} ) ÷ 2 = ${num(m.gap1,0)} mm</text>
-    <text x="540" y="398" class="txt">Outer gap = ( ${outerD} − ${jacketD} ) ÷ 2 = ${num(m.gap2,0)} mm</text>
-    <text x="540" y="430" class="txt">Jacket bottom depth = ${m.dish} + ${num(m.gap1,0)} = ${num(m.jDepth,0)} mm</text>
-    <text x="540" y="462" class="txt">Outer bottom depth = ${num(m.jDepth,0)} + ${num(m.gap2,0)} = ${num(m.oDepth,0)} mm</text>
-    <text x="540" y="494" class="txt">Gap strip auto size = ${num(m.autoGapStripL,0)} × ${num(m.autoGapStripW,0)} mm</text>
-    <text x="540" y="526" class="txt">Legs = pipe type, jacket shell touch</text>
+    <!-- Dimensions -->
+    <line x1="${cx-rI}" y1="${topY+108}" x2="${cx+rI}" y2="${topY+108}" class="dim" stroke-width="1.2"/>
+    <line x1="${cx-rI}" y1="${topY+98}" x2="${cx-rI}" y2="${topY+118}" stroke="#555" stroke-width="1"/>
+    <line x1="${cx+rI}" y1="${topY+98}" x2="${cx+rI}" y2="${topY+118}" stroke="#555" stroke-width="1"/>
+    <text x="${cx}" y="${topY+105}" text-anchor="middle" class="txt">Ø${innerD}</text>
 
-    <text x="670" y="32" class="title">TOP VIEW</text>
-    <circle cx="${tvx}" cy="${tvy}" r="${tvO}" class="outer" fill="none"/>
-    <circle cx="${tvx}" cy="${tvy}" r="${tvJ}" class="jacket" fill="none"/>
-    <circle cx="${tvx}" cy="${tvy}" r="${tvI}" class="inner" fill="none"/>
-    <line x1="${tvx-tvO-25}" y1="${tvy}" x2="${tvx+tvO+25}" y2="${tvy}" class="center"/>
-    <line x1="${tvx}" y1="${tvy-tvO-25}" x2="${tvx}" y2="${tvy+tvO+25}" class="center"/>
-    <text x="${tvx}" y="${tvy+tvO+28}" text-anchor="middle" class="small">Ø${innerD} / Ø${jacketD} / Ø${outerD}</text>
+    <line x1="${cx-rJ}" y1="${topY+152}" x2="${cx+rJ}" y2="${topY+152}" class="dim" stroke-width="1.2"/>
+    <line x1="${cx-rJ}" y1="${topY+142}" x2="${cx-rJ}" y2="${topY+162}" stroke="#555" stroke-width="1"/>
+    <line x1="${cx+rJ}" y1="${topY+142}" x2="${cx+rJ}" y2="${topY+162}" stroke="#555" stroke-width="1"/>
+    <text x="${cx}" y="${topY+150}" text-anchor="middle" class="txt">Ø${jacketD}</text>
+
+    <line x1="${cx-rO}" y1="${topY+196}" x2="${cx+rO}" y2="${topY+196}" class="dim" stroke-width="1.2"/>
+    <line x1="${cx-rO}" y1="${topY+186}" x2="${cx-rO}" y2="${topY+206}" stroke="#555" stroke-width="1"/>
+    <line x1="${cx+rO}" y1="${topY+186}" x2="${cx+rO}" y2="${topY+206}" stroke="#555" stroke-width="1"/>
+    <text x="${cx}" y="${topY+194}" text-anchor="middle" class="txt">Ø${outerD}</text>
+
+    <!-- Annotations -->
+    <text x="470" y="100" class="txt">Inner Height = ${innerH} mm</text>
+    <text x="470" y="125" class="txt">Jacket Top Clear = ${jacketClear} mm</text>
+    <text x="470" y="150" class="txt">Outer Top Clear = ${outerClear} mm</text>
+    <text x="470" y="175" class="txt">Bottom Dish = ${m.dish} mm</text>
+    <text x="470" y="200" class="txt">Leg Height = ${legH} mm</text>
+    <text x="470" y="225" class="txt">Baffles = 4 | Impeller = 8 Blades</text>
+
+    <!-- TOP VIEW -->
+    <text x="680" y="35" class="title">TOP VIEW (PLAN)</text>
+
+    <circle cx="${tvx}" cy="${tvy}" r="${tvO}" class="outer"/>
+    <circle cx="${tvx}" cy="${tvy}" r="${tvJ}" class="jacket"/>
+    <circle cx="${tvx}" cy="${tvy}" r="${tvI}" class="inner"/>
+
+    <line x1="${tvx-tvO-28}" y1="${tvy}" x2="${tvx+tvO+28}" y2="${tvy}" class="center" stroke-width="1"/>
+    <line x1="${tvx}" y1="${tvy-tvO-28}" x2="${tvx}" y2="${tvy+tvO+28}" class="center" stroke-width="1"/>
+
+    ${[...Array(8)].map((_, i)=>{
+      const angle=(i/8)*Math.PI*2;
+      const r1=tvI*0.40;
+      const r2=tvI*0.75;
+      const x1=tvx+Math.cos(angle)*r1;
+      const y1=tvy+Math.sin(angle)*r1;
+      const x2=tvx+Math.cos(angle)*r2;
+      const y2=tvy+Math.sin(angle)*r2;
+      return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#111" stroke-width="1.8"/>`;
+    }).join('')}
+
+    <circle cx="${tvx+tvJ+12}" cy="${tvy}" r="3.5" fill="none" stroke="#333" stroke-width="1.6"/>
+    <text x="${tvx+tvJ+22}" y="${tvy+4}" class="small">In</text>
+
+    <circle cx="${tvx-tvJ-12}" cy="${tvy}" r="3.5" fill="none" stroke="#333" stroke-width="1.6"/>
+    <text x="${tvx-tvJ-32}" y="${tvy+4}" class="small">Out</text>
+
+    <text x="${tvx}" y="${tvy+tvO+42}" text-anchor="middle" class="txt">Ø${innerD} / Ø${jacketD} / Ø${outerD}</text>
     `;
   }
 
   function saveData(){
     const obj={}; ids.forEach(id=>obj[id]=document.getElementById(id).value);
-    localStorage.setItem('veerVesselCalcV8', JSON.stringify(obj));
+    localStorage.setItem('veerPharmaCalc', JSON.stringify(obj));
     alert('Values saved in this browser.');
   }
   function loadData(){
     try{
-      const obj = JSON.parse(localStorage.getItem('veerVesselCalcV8') || '{}');
+      const obj = JSON.parse(localStorage.getItem('veerPharmaCalc') || '{}');
       ids.forEach(id=>{ if(obj[id]!==undefined) document.getElementById(id).value=obj[id]; });
     }catch(e){}
   }
   function resetData(){
-    localStorage.removeItem('veerVesselCalcV8');
+    localStorage.removeItem('veerPharmaCalc');
     location.reload();
   }
   ids.forEach(id=>document.getElementById(id).addEventListener('input', update));
