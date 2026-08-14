@@ -1,64 +1,188 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Veer Pharma - Vessel Auto Calculator</title>
+  <title>Veer Pharma - Engineering Calculator</title>
   <style>
-    :root{
-      --bg:#f5f7fa; --card:#ffffff; --ink:#111827; --muted:#6b7280; --line:#d1d5db;
-      --accent:#0f766e; --input:#fff7cc; --ok:#ecfdf5;
+    :root {
+      --primary: #0f172a;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --input-bg: #ffffff;
+      --success-bg: #f0fdf4;
+      --success-border: #bbf7d0;
+      --success-text: #166534;
+      --danger-bg: #fef2f2;
+      --danger-text: #991b1b;
+      --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
-    header{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--line);padding:12px 16px}
-    .header-row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-    h1{font-size:20px;margin:0}
-    .sub{font-size:12px;color:var(--muted)}
-    .actions{display:flex;gap:8px;flex-wrap:wrap}
-    button{border:0;border-radius:8px;padding:10px 12px;font-weight:700;cursor:pointer}
-    .primary{background:#0f766e;color:white}
-    .secondary{background:#e5e7eb}
-    .danger{background:#fee2e2;color:#991b1b}
-    main{padding:14px;max-width:1600px;margin:auto}
-    .grid{display:grid;grid-template-columns:minmax(360px,540px) 1fr;gap:14px}
-    .card{background:#fff;border:1px solid #d1d5db;border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-    .card h2{font-size:16px;margin:0 0 10px}
-    .card h3{font-size:14px;margin:14px 0 8px}
-    .formgrid{display:grid;grid-template-columns:1.6fr 1fr .75fr;gap:7px;align-items:center}
-    .formgrid label{font-size:13px}
-    .unit{font-size:12px;color:#6b7280}
-    input,select{width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:7px;background:#fff7cc;font-size:14px}
-    .kpis{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:8px;margin:10px 0}
-    .kpi{background:#ecfdf5;border:1px solid #bbf7d0;border-radius:9px;padding:10px}
-    .kpi small{display:block;color:#4b5563}.kpi strong{font-size:17px}
-    .table-wrap{overflow:auto}
-    table{width:100%;border-collapse:collapse;font-size:12px}
-    th,td{border:1px solid #d1d5db;padding:6px;text-align:right;white-space:nowrap;vertical-align:top}
-    th:first-child,td:first-child{text-align:left}
-    th{background:#f3f4f6}
-    .total-row{font-weight:700;background:#f0fdf4}
-    svg{width:100%;height:auto;background:#fff;border:1px solid #d1d5db;border-radius:10px}
-    .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;margin:8px 0}
-    .linekey{display:flex;align-items:center;gap:6px}
-    .line{width:30px;border-top:2px solid #111}
-    .dash{border-top-style:dashed}
-    .thick{border-top-width:4px}
-    .note{font-size:12px;color:#4b5563;line-height:1.45}
-    .smallnote{font-size:11px;color:#6b7280}
-    footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}
-    @media(max-width:980px){
-      .grid{grid-template-columns:1fr}
-      .kpis{grid-template-columns:repeat(2,1fr)}
-      header{position:static}
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font-main);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
     }
-    @media print{
-      header,.no-print{display:none!important}
-      body{background:#fff}
-      main{max-width:none;padding:0}
-      .grid{grid-template-columns:1fr}
-      .card{box-shadow:none;border:0;page-break-inside:avoid}
-      input,select{border:0;background:white}
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--primary);
+      color: white;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 1rem 1.5rem;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
+
+    .header-row {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    h1 { font-size: 1.25rem; margin: 0; font-weight: 700; letter-spacing: -0.025em; }
+    .sub { font-size: 0.875rem; color: #94a3b8; margin-top: 0.25rem; }
+
+    .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    button {
+      border: 0;
+      border-radius: 0.5rem;
+      padding: 0.625rem 1rem;
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .primary { background: var(--accent); color: white; }
+    .primary:hover { background: var(--accent-hover); }
+    .secondary { background: #334155; color: white; }
+    .secondary:hover { background: #475569; }
+    .danger { background: #991b1b; color: white; }
+    .danger:hover { background: #7f1d1d; }
+
+    main { padding: 1.5rem; max-width: 1600px; margin: auto; }
+    .grid { display: grid; grid-template-columns: 480px 1fr; gap: 1.5rem; align-items: start; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    }
+
+    .card h2 {
+      font-size: 1rem;
+      margin: 0 0 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .card h3 {
+      font-size: 0.875rem;
+      margin: 1.5rem 0 1rem;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .card h3::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .formgrid {
+      display: grid;
+      grid-template-columns: 1fr 100px 40px;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    .formgrid label { font-size: 0.8125rem; font-weight: 500; color: var(--text-muted); }
+    .unit { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+
+    input, select {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 0.375rem;
+      background: var(--input-bg);
+      font-size: 0.875rem;
+      color: var(--text);
+      transition: border-color 0.15s ease;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin: 1.5rem 0 0;
+    }
+    .kpi {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 0.625rem;
+      padding: 0.875rem;
+      transition: transform 0.2s;
+    }
+    .kpi:hover { transform: translateY(-2px); }
+    .kpi small { display: block; color: var(--text-muted); font-size: 0.75rem; margin-bottom: 0.25rem; font-weight: 600; text-transform: uppercase; }
+    .kpi strong { font-size: 1.125rem; color: var(--primary); font-weight: 700; }
+
+    .table-wrap { overflow: auto; margin-top: 0.5rem; border-radius: 0.5rem; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+    th, td { padding: 0.75rem; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--border); }
+    th:first-child, td:first-child { text-align: left; position: sticky; left: 0; background: inherit; }
+    th { background: #f8fafc; color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.025em; }
+    tr:hover td { background: #f1f5f9; }
+
+    .total-row { font-weight: 700; background: var(--success-bg); color: var(--success-text); }
+    .total-row td { border-bottom: 0; }
+
+    svg { width: 100%; height: auto; background: #fff; border-radius: 0.5rem; }
+
+    .legend { display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.75rem; margin: 1rem 0; padding: 0.75rem; background: var(--bg); border-radius: 0.5rem; }
+    .linekey { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; }
+    .line { width: 24px; height: 3px; background: var(--primary); }
+    .dash { border-top: 2px dashed var(--primary); background: transparent; height: 0; }
+    .thick { height: 5px; }
+
+    footer { text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 2rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+
+    @media(max-width: 1100px) {
+      .grid { grid-template-columns: 1fr; }
+      header { position: static; }
+    }
+
+    @media print {
+      header, .no-print, .actions { display: none !important; }
+      body { background: #fff; }
+      main { padding: 0; max-width: none; }
+      .grid { display: block; }
+      .card { border: 1px solid #000; box-shadow: none; margin-bottom: 2rem; page-break-inside: avoid; }
+      .kpi { border: 1px solid #000; }
+      input, select { border: 0; background: transparent; -webkit-appearance: none; }
     }
   </style>
 </head>
@@ -66,12 +190,12 @@
 <header>
   <div class="header-row">
     <div>
-      <h1>VEER PHARMA — Jacketed Vessel Calculator + Engineering Drawing</h1>
-      <div class="sub">Complete Material Cutting List | Auto Weight & Cost | Live Drawing</div>
+      <h1>VEER PHARMA ENGINEERING</h1>
+      <div class="sub">Jacketed Vessel — Fabrication & Cost Estimator</div>
     </div>
     <div class="actions">
-      <button class="primary" onclick="window.print()">Print / Save PDF</button>
-      <button class="secondary" onclick="saveData()">Save Values</button>
+      <button class="primary" onclick="window.print()">Export PDF</button>
+      <button class="secondary" onclick="saveData()">Save State</button>
       <button class="danger" onclick="resetData()">Reset</button>
     </div>
   </div>
@@ -80,136 +204,204 @@
 <main>
   <div class="grid">
     <section class="card">
-      <h2>1) Main Vessel Input</h2>
+      <h2>Technical Specifications</h2>
+
+      <h3>Primary Vessel Dimensions</h3>
       <div class="formgrid">
-        <label>Inner Shell Diameter</label><input id="innerD" type="number" step="1" value="800"><span class="unit">mm</span>
-        <label>Jacket Diameter</label><input id="jacketD" type="number" step="1" value="880"><span class="unit">mm</span>
-        <label>Insulation / Outer Diameter</label><input id="outerD" type="number" step="1" value="980"><span class="unit">mm</span>
+        <label>Inner Shell Diameter</label><input id="innerD" type="number" value="800"><span class="unit">mm</span>
+        <label>Jacket Diameter</label><input id="jacketD" type="number" value="880"><span class="unit">mm</span>
+        <label>Insulation Diameter</label><input id="outerD" type="number" value="980"><span class="unit">mm</span>
 
-        <label>Inner Straight Height</label><input id="innerH" type="number" step="1" value="900"><span class="unit">mm</span>
-        <label>Jacket Top Clearance</label><input id="jacketClear" type="number" step="1" value="200"><span class="unit">mm</span>
-        <label>Insulation Top Clearance</label><input id="outerClear" type="number" step="1" value="150"><span class="unit">mm</span>
+        <label>Inner Straight Height</label><input id="innerH" type="number" value="900"><span class="unit">mm</span>
+        <label>Jacket Top Clearance</label><input id="jacketClear" type="number" value="200"><span class="unit">mm</span>
+        <label>Insulation Top Clearance</label><input id="outerClear" type="number" value="150"><span class="unit">mm</span>
 
-        <label>Inner Bottom Dish Depth</label><input id="dishDepth" type="number" step="1" value="150"><span class="unit">mm</span>
-        <label>Leg Height</label><input id="legH" type="number" step="1" value="450"><span class="unit">mm</span>
-
-        <label>Inner Thickness</label><input id="innerT" type="number" step="0.1" value="3"><span class="unit">mm</span>
-        <label>Jacket Thickness</label><input id="jacketT" type="number" step="0.1" value="3"><span class="unit">mm</span>
-        <label>Outer Thickness</label><input id="outerT" type="number" step="0.1" value="2"><span class="unit">mm</span>
-
-        <label>Inner Material</label>
-        <select id="innerMat"><option value="8000">SS 316 (8000 kg/m³)</option><option value="7930">SS 304 (7930 kg/m³)</option><option value="7850">MS (7850 kg/m³)</option></select><span></span>
-        <label>Jacket Material</label>
-        <select id="jacketMat"><option value="7930">SS 304 (7930 kg/m³)</option><option value="8000">SS 316 (8000 kg/m³)</option><option value="7850">MS (7850 kg/m³)</option></select><span></span>
-        <label>Outer Material</label>
-        <select id="outerMat"><option value="7850">MS (7850 kg/m³)</option><option value="7930">SS 304 (7930 kg/m³)</option><option value="8000">SS 316 (8000 kg/m³)</option></select><span></span>
+        <label>Inner Dish Depth</label><input id="dishDepth" type="number" value="150"><span class="unit">mm</span>
+        <label>Leg Height</label><input id="legH" type="number" value="450"><span class="unit">mm</span>
       </div>
 
-      <h3>2) Extra Material Inputs</h3>
+      <h3>Material Selection</h3>
       <div class="formgrid">
-        <label>Leg Pipe OD</label><input id="legPipeOD" type="number" step="1" value="50"><span class="unit">mm</span>
-        <label>Leg Pipe Thickness</label><input id="legPipeT" type="number" step="0.1" value="2"><span class="unit">mm</span>
-        <label>Leg Pipe Qty</label><input id="legPipeQty" type="number" step="1" value="2"><span class="unit">nos</span>
+        <label>Inner Shell (T)</label><input id="innerT" type="number" step="0.1" value="3"><span class="unit">mm</span>
+        <label>Inner Grade</label>
+        <select id="innerMat">
+          <option value="8000">SS 316 (8000 kg/m³)</option>
+          <option value="7930">SS 304 (7930 kg/m³)</option>
+          <option value="7850">MS (7850 kg/m³)</option>
+        </select><span></span>
 
-        <label>Leg Pipe Material</label>
-        <select id="legPipeMat"><option value="7930">SS 304 (7930 kg/m³)</option><option value="8000">SS 316 (8000 kg/m³)</option><option value="7850">MS (7850 kg/m³)</option></select><span></span><span></span>
+        <label>Jacket Shell (T)</label><input id="jacketT" type="number" step="0.1" value="3"><span class="unit">mm</span>
+        <label>Jacket Grade</label>
+        <select id="jacketMat">
+          <option value="7930">SS 304 (7930 kg/m³)</option>
+          <option value="8000">SS 316 (8000 kg/m³)</option>
+          <option value="7850">MS (7850 kg/m³)</option>
+        </select><span></span>
 
-        <label>Top Cover Diameter</label><input id="topCoverD" type="number" step="1" value="800"><span class="unit">mm</span>
-        <label>Top Cover Thickness</label><input id="topCoverT" type="number" step="0.1" value="3"><span class="unit">mm</span>
-        <label>Top Cover Qty</label><input id="topCoverQty" type="number" step="1" value="1"><span class="unit">nos</span>
-
-        <label>Top Cover Material</label>
-        <select id="topCoverMat"><option value="8000">SS 316 (8000 kg/m³)</option><option value="7930">SS 304 (7930 kg/m³)</option><option value="7850">MS (7850 kg/m³)</option></select><span></span><span></span>
-
-        <label>Circle Plate Diameter</label><input id="circleD" type="number" step="1" value="800"><span class="unit">mm</span>
-        <label>Circle Plate Thickness</label><input id="circleT" type="number" step="0.1" value="3"><span class="unit">mm</span>
-        <label>Circle Plate Qty</label><input id="circleQty" type="number" step="1" value="1"><span class="unit">nos</span>
-
-        <label>Circle Plate Material</label>
-        <select id="circleMat"><option value="8000">SS 316 (8000 kg/m³)</option><option value="7930">SS 304 (7930 kg/m³)</option><option value="7850">MS (7850 kg/m³)</option></select><span></span><span></span>
-
-        <label>Patti / Strip Width</label><input id="pattiW" type="number" step="1" value="40"><span class="unit">mm</span>
-        <label>Patti / Strip Thickness</label><input id="pattiT" type="number" step="0.1" value="3"><span class="unit">mm</span>
-        <label>Patti Qty</label><input id="pattiQty" type="number" step="1" value="2"><span class="unit">nos</span>
-
-        <label>Patti / Strip Length</label><input id="pattiL" type="number" step="1" value="2765"><span class="unit">mm</span>
-        <label>Patti Material</label>
-        <select id="pattiMat"><option value="7930">SS 304 (7930 kg/m³)</option><option value="8000">SS 316 (8000 kg/m³)</option><option value="7850">MS (7850 kg/m³)</option></select><span></span>
-        <label>Gap Strip Auto Qty</label><input id="gapStripQty" type="number" step="1" value="2"><span class="unit">nos</span>
-
-        <label>Gap Strip Material</label>
-        <select id="gapStripMat"><option value="7850">MS (7850 kg/m³)</option><option value="7930">SS 304 (7930 kg/m³)</option><option value="8000">SS 316 (8000 kg/m³)</option></select><span></span><span></span>
+        <label>Outer Shell (T)</label><input id="outerT" type="number" step="0.1" value="2"><span class="unit">mm</span>
+        <label>Outer Grade</label>
+        <select id="outerMat">
+          <option value="7850">MS (7850 kg/m³)</option>
+          <option value="7930">SS 304 (7930 kg/m³)</option>
+          <option value="8000">SS 316 (8000 kg/m³)</option>
+        </select><span></span>
       </div>
 
-      <h3>3) Material Rates</h3>
+      <h3>Ancillary Components</h3>
       <div class="formgrid">
-        <label>SS316 Rate / kg</label><input id="rate316" type="number" value="300"><span class="unit">₹/kg</span>
-        <label>SS304 Rate / kg</label><input id="rate304" type="number" value="240"><span class="unit">₹/kg</span>
-        <label>MS Rate / kg</label><input id="rateMS" type="number" value="75"><span class="unit">₹/kg</span>
-        <label>Fabrication Rate</label><input id="fabRate" type="number" value="120"><span class="unit">₹/kg</span>
-        <label>Polishing Rate</label><input id="polishRate" type="number" value="60"><span class="unit">₹/kg</span>
+        <label>Leg Pipe OD / T</label>
+        <div style="display:flex; gap:4px">
+          <input id="legPipeOD" type="number" value="50">
+          <input id="legPipeT" type="number" step="0.1" value="2">
+        </div><span class="unit">mm</span>
+        <label>Leg Qty / Grade</label>
+        <div style="display:flex; gap:4px">
+          <input id="legPipeQty" type="number" value="2" style="width:60px">
+          <select id="legPipeMat">
+            <option value="7930">SS 304</option>
+            <option value="8000">SS 316</option>
+            <option value="7850">MS</option>
+          </select>
+        </div><span></span>
+
+        <label>Top Cover D / T</label>
+        <div style="display:flex; gap:4px">
+          <input id="topCoverD" type="number" value="800">
+          <input id="topCoverT" type="number" step="0.1" value="3">
+        </div><span class="unit">mm</span>
+        <label>Top Qty / Grade</label>
+        <div style="display:flex; gap:4px">
+          <input id="topCoverQty" type="number" value="1" style="width:60px">
+          <select id="topCoverMat">
+            <option value="8000">SS 316</option>
+            <option value="7930">SS 304</option>
+            <option value="7850">MS</option>
+          </select>
+        </div><span></span>
+
+        <label>Circle Plate D / T</label>
+        <div style="display:flex; gap:4px">
+          <input id="circleD" type="number" value="800">
+          <input id="circleT" type="number" step="0.1" value="3">
+        </div><span class="unit">mm</span>
+        <label>Circle Qty / Grade</label>
+        <div style="display:flex; gap:4px">
+          <input id="circleQty" type="number" value="1" style="width:60px">
+          <select id="circleMat">
+            <option value="8000">SS 316</option>
+            <option value="7930">SS 304</option>
+            <option value="7850">MS</option>
+          </select>
+        </div><span></span>
+
+        <label>Patti W / T / L</label>
+        <div style="display:flex; gap:4px">
+          <input id="pattiW" type="number" value="40">
+          <input id="pattiT" type="number" step="0.1" value="3">
+          <input id="pattiL" type="number" value="2765">
+        </div><span class="unit">mm</span>
+        <label>Patti Qty / Grade</label>
+        <div style="display:flex; gap:4px">
+          <input id="pattiQty" type="number" value="2" style="width:60px">
+          <select id="pattiMat">
+            <option value="7930">SS 304</option>
+            <option value="8000">SS 316</option>
+            <option value="7850">MS</option>
+          </select>
+        </div><span></span>
+
+        <label>Gap Strip Qty / Grade</label>
+        <div style="display:flex; gap:4px">
+          <input id="gapStripQty" type="number" value="2" style="width:60px">
+          <select id="gapStripMat">
+            <option value="7850">MS</option>
+            <option value="7930">SS 304</option>
+            <option value="8000">SS 316</option>
+          </select>
+        </div><span></span>
       </div>
 
-      <h3>4) Bought-out / Other Cost</h3>
+      <h3>Financial Parameters</h3>
       <div class="formgrid">
-        <label>Motor + Gearbox</label><input id="motorCost" type="number" value="12000"><span class="unit">₹</span>
-        <label>Heater Total</label><input id="heaterCost" type="number" value="6000"><span class="unit">₹</span>
-        <label>Digital Panel</label><input id="panelCost" type="number" value="4500"><span class="unit">₹</span>
-        <label>Valves / TC / Fittings</label><input id="fittingCost" type="number" value="8500"><span class="unit">₹</span>
-        <label>Legs / Base / Misc.</label><input id="miscCost" type="number" value="4000"><span class="unit">₹</span>
-        <label>Other Cost</label><input id="otherCost" type="number" value="0"><span class="unit">₹</span>
-      </div>
+        <label>SS 316 / 304 Rate</label>
+        <div style="display:flex; gap:4px">
+          <input id="rate316" type="number" value="300">
+          <input id="rate304" type="number" value="240">
+        </div><span class="unit">₹</span>
+        <label>MS / Fab Rate</label>
+        <div style="display:flex; gap:4px">
+          <input id="rateMS" type="number" value="75">
+          <input id="fabRate" type="number" value="120">
+        </div><span class="unit">₹</span>
+        <label>Polish Rate</label><input id="polishRate" type="number" value="60"><span class="unit">₹</span>
 
-      <h3>5) Final Costing</h3>
-      <div class="formgrid">
-        <label>Overhead</label><input id="overheadPct" type="number" value="10"><span class="unit">%</span>
-        <label>Profit</label><input id="profitPct" type="number" value="20"><span class="unit">%</span>
-        <label>GST</label><input id="gstPct" type="number" value="18"><span class="unit">%</span>
+        <label>Motor / Heater Cost</label>
+        <div style="display:flex; gap:4px">
+          <input id="motorCost" type="number" value="12000">
+          <input id="heaterCost" type="number" value="6000">
+        </div><span class="unit">₹</span>
+        <label>Panel / Fitting Cost</label>
+        <div style="display:flex; gap:4px">
+          <input id="panelCost" type="number" value="4500">
+          <input id="fittingCost" type="number" value="8500">
+        </div><span class="unit">₹</span>
+        <label>Misc / Other Cost</label>
+        <div style="display:flex; gap:4px">
+          <input id="miscCost" type="number" value="4000">
+          <input id="otherCost" type="number" value="0">
+        </div><span class="unit">₹</span>
+
+        <label>Overhead / Profit %</label>
+        <div style="display:flex; gap:4px">
+          <input id="overheadPct" type="number" value="10">
+          <input id="profitPct" type="number" value="20">
+        </div><span class="unit">%</span>
+        <label>GST Rate</label><input id="gstPct" type="number" value="18"><span class="unit">%</span>
       </div>
 
       <div class="kpis">
         <div class="kpi"><small>Jacket Gap</small><strong id="kGap1">–</strong></div>
         <div class="kpi"><small>Outer Gap</small><strong id="kGap2">–</strong></div>
-        <div class="kpi"><small>Total Material Wt</small><strong id="kTotalWt">–</strong></div>
-        <div class="kpi"><small>Final Price</small><strong id="kFinal">–</strong></div>
+        <div class="kpi"><small>Total Weight</small><strong id="kTotalWt">–</strong></div>
+        <div class="kpi" style="background:var(--primary); color:white"><small style="color:#94a3b8">Final Price</small><strong id="kFinal" style="color:white">–</strong></div>
       </div>
     </section>
 
     <section>
       <div class="card">
-        <h2>Live Engineering Drawing</h2>
+        <h2>Engineering Drawing</h2>
         <div class="legend">
-          <div class="linekey"><span class="line"></span>Inner Shell</div>
-          <div class="linekey"><span class="line dash"></span>Jacket Shell</div>
-          <div class="linekey"><span class="line thick"></span>Insulation / Outer Shell</div>
+          <div class="linekey"><div class="line"></div> Inner</div>
+          <div class="linekey"><div class="line dash"></div> Jacket</div>
+          <div class="linekey"><div class="line thick"></div> Insulation</div>
         </div>
         <svg id="drawing" viewBox="0 0 980 720"></svg>
       </div>
 
-      <div class="card" style="margin-top:14px">
-        <h2>Complete Cutting Material List</h2>
+      <div class="card" style="margin-top:1.5rem">
+        <h2>Material Cutting List</h2>
         <div class="table-wrap">
           <table>
             <thead>
             <tr>
-              <th>Sr.</th>
-              <th>Material / Part</th>
+              <th>Sr</th>
+              <th>Part Name</th>
               <th>Grade</th>
               <th>Qty</th>
-              <th>Cut Length / Dia (mm)</th>
-              <th>Height / Width (mm)</th>
-              <th>Thickness (mm)</th>
-              <th>Cutting Size / Description</th>
-              <th>Wt / Pc (kg)</th>
-              <th>Total Wt (kg)</th>
-              <th>Rate / kg</th>
-              <th>Material Cost</th>
+              <th>L/Dia</th>
+              <th>H/W</th>
+              <th>T</th>
+              <th>Description</th>
+              <th>Wt/Pc</th>
+              <th>Total Wt</th>
+              <th>Rate</th>
+              <th>Cost</th>
             </tr>
             </thead>
             <tbody id="cuttingBody"></tbody>
             <tfoot>
             <tr class="total-row">
-              <td colspan="9">TOTAL MATERIAL WEIGHT</td>
+              <td colspan="9">TOTAL MATERIAL ESTIMATE</td>
               <td id="cuttingTotalWt"></td>
               <td></td>
               <td id="cuttingTotalCost"></td>
@@ -219,20 +411,20 @@
         </div>
       </div>
 
-      <div class="card" style="margin-top:14px">
-        <h2>Cost Summary</h2>
+      <div class="card" style="margin-top:1.5rem">
+        <h2>Cost Analysis</h2>
         <div class="table-wrap">
-          <table>
+          <table style="font-size:0.875rem">
             <tbody>
-            <tr><td>Total Material Cost</td><td id="cMaterial"></td></tr>
-            <tr><td>Fabrication</td><td id="cFab"></td></tr>
-            <tr><td>Polishing</td><td id="cPolish"></td></tr>
-            <tr><td>Bought-out / Other Parts</td><td id="cBought"></td></tr>
-            <tr><td>Overhead</td><td id="cOverhead"></td></tr>
-            <tr><td>Profit</td><td id="cProfit"></td></tr>
-            <tr class="total-row"><td>Price Before GST</td><td id="cBefore"></td></tr>
-            <tr><td>GST</td><td id="cGST"></td></tr>
-            <tr class="total-row"><td>FINAL PRICE</td><td id="cFinal"></td></tr>
+            <tr><td>Total Raw Material</td><td id="cMaterial"></td></tr>
+            <tr><td>Fabrication Charges</td><td id="cFab"></td></tr>
+            <tr><td>Polishing Charges</td><td id="cPolish"></td></tr>
+            <tr><td>Bought-out Components</td><td id="cBought"></td></tr>
+            <tr><td>Business Overhead</td><td id="cOverhead"></td></tr>
+            <tr><td>Operating Profit</td><td id="cProfit"></td></tr>
+            <tr class="total-row"><td>Subtotal (Pre-Tax)</td><td id="cBefore"></td></tr>
+            <tr><td>GST Amount</td><td id="cGST"></td></tr>
+            <tr class="total-row" style="background:var(--primary); color:white"><td>TOTAL PROJECT COST</td><td id="cFinal"></td></tr>
             </tbody>
           </table>
         </div>
@@ -240,33 +432,40 @@
     </section>
   </div>
 </main>
-<footer>VEER PHARMA • Browser-based single file calculator • PC & Mobile compatible</footer>
+
+<footer>
+  VEER PHARMA ENGINEERING — Proprietary Estimator Tool — v2.0
+</footer>
 
 <script>
   const ids = [
-  'innerD','jacketD','outerD','innerH','jacketClear','outerClear','dishDepth','legH',
-  'innerT','jacketT','outerT','innerMat','jacketMat','outerMat',
-  'legPipeOD','legPipeT','legPipeQty','legPipeMat',
-  'topCoverD','topCoverT','topCoverQty','topCoverMat',
-  'circleD','circleT','circleQty','circleMat',
-  'pattiL','pattiW','pattiT','pattiQty','pattiMat','gapStripQty','gapStripMat',
-  'rate316','rate304','rateMS','fabRate','polishRate',
-  'motorCost','heaterCost','panelCost','fittingCost','miscCost','otherCost',
-  'overheadPct','profitPct','gstPct'
+    'innerD','jacketD','outerD','innerH','jacketClear','outerClear','dishDepth','legH',
+    'innerT','jacketT','outerT','innerMat','jacketMat','outerMat',
+    'legPipeOD','legPipeT','legPipeQty','legPipeMat',
+    'topCoverD','topCoverT','topCoverQty','topCoverMat',
+    'circleD','circleT','circleQty','circleMat',
+    'pattiL','pattiW','pattiT','pattiQty','pattiMat','gapStripQty','gapStripMat',
+    'rate316','rate304','rateMS','fabRate','polishRate',
+    'motorCost','heaterCost','panelCost','fittingCost','miscCost','otherCost',
+    'overheadPct','profitPct','gstPct'
   ];
 
   function n(id){ return parseFloat(document.getElementById(id).value)||0; }
   function money(v){ return '₹ ' + Math.round(v).toLocaleString('en-IN'); }
   function num(v,d=1){ return Number(v).toLocaleString('en-IN',{maximumFractionDigits:d}); }
+
   function materialName(selectId){
     const el = document.getElementById(selectId);
+    if(!el) return '';
     return el.options[el.selectedIndex] ? el.options[el.selectedIndex].text.split(' (')[0] : '';
   }
+
   function matRateByDensity(rho){
     if(Math.abs(rho-8000)<30) return n('rate316');
     if(Math.abs(rho-7930)<30) return n('rate304');
     return n('rateMS');
   }
+
   function wtShell(d,h,t,rho){ return Math.PI*d*h*t*rho/1e9; }
   function wtCircle(d,t,rho){ return (Math.PI/4)*d*d*t*rho/1e9; }
   function wtRect(l,w,t,rho){ return l*w*t*rho/1e9; }
@@ -293,7 +492,7 @@
     const shells = [
       {name:'Inner Shell', d:innerD, h:innerH, t:n('innerT'), rho:n('innerMat'), grade:materialName('innerMat'), qty:1},
       {name:'Jacket Shell', d:jacketD, h:Math.max(0,innerH-jacketClear), t:n('jacketT'), rho:n('jacketMat'), grade:materialName('jacketMat'), qty:1},
-      {name:'Insulation / Outer Shell', d:outerD, h:Math.max(0,innerH-outerClear), t:n('outerT'), rho:n('outerMat'), grade:materialName('outerMat'), qty:1}
+      {name:'Insulation Shell', d:outerD, h:Math.max(0,innerH-outerClear), t:n('outerT'), rho:n('outerMat'), grade:materialName('outerMat'), qty:1}
     ];
 
     shells.forEach(x=>{
@@ -303,7 +502,7 @@
       items.push({
         part:x.name, grade:x.grade, qty:x.qty, kind:'shell',
         length:cut, width:x.h, thk:x.t,
-        desc:`${num(cut,0)} L × ${num(x.h,0)} H × ${num(x.t,1)} T`,
+        desc:`${num(cut,0)} × ${num(x.h,0)}`,
         wtpc:wt, totalWt:wt*x.qty, rate:rate, cost:wt*x.qty*rate
       });
     });
@@ -314,7 +513,7 @@
     items.push({
       part:'Pipe Leg', grade:materialName('legPipeMat'), qty:n('legPipeQty'), kind:'pipe',
       length:n('legH'), width:n('legPipeOD'), thk:n('legPipeT'),
-      desc:`OD ${num(n('legPipeOD'),0)} × L ${num(n('legH'),0)} × T ${num(n('legPipeT'),1)}`,
+      desc:`OD ${num(n('legPipeOD'),0)} × L ${num(n('legH'),0)}`,
       wtpc:legPipeWtPc, totalWt:legPipeWtPc*n('legPipeQty'), rate:legPipeRate, cost:legPipeWtPc*n('legPipeQty')*legPipeRate
     });
 
@@ -324,7 +523,7 @@
     items.push({
       part:'Top Cover', grade:materialName('topCoverMat'), qty:n('topCoverQty'), kind:'circle',
       length:n('topCoverD'), width:n('topCoverD'), thk:n('topCoverT'),
-      desc:`Ø ${num(n('topCoverD'),0)} × ${num(n('topCoverT'),1)} T`,
+      desc:`Ø ${num(n('topCoverD'),0)}`,
       wtpc:topCoverWtPc, totalWt:topCoverWtPc*n('topCoverQty'), rate:topCoverRate, cost:topCoverWtPc*n('topCoverQty')*topCoverRate
     });
 
@@ -334,7 +533,7 @@
     items.push({
       part:'Circle Plate', grade:materialName('circleMat'), qty:n('circleQty'), kind:'circle',
       length:n('circleD'), width:n('circleD'), thk:n('circleT'),
-      desc:`Ø ${num(n('circleD'),0)} × ${num(n('circleT'),1)} T`,
+      desc:`Ø ${num(n('circleD'),0)}`,
       wtpc:circleWtPc, totalWt:circleWtPc*n('circleQty'), rate:circleRate, cost:circleWtPc*n('circleQty')*circleRate
     });
 
@@ -344,7 +543,7 @@
     items.push({
       part:'Patti / Strip', grade:materialName('pattiMat'), qty:n('pattiQty'), kind:'rect',
       length:n('pattiL'), width:n('pattiW'), thk:n('pattiT'),
-      desc:`${num(n('pattiL'),0)} L × ${num(n('pattiW'),0)} W × ${num(n('pattiT'),1)} T`,
+      desc:`${num(n('pattiL'),0)} × ${num(n('pattiW'),0)}`,
       wtpc:pattiWtPc, totalWt:pattiWtPc*n('pattiQty'), rate:pattiRate, cost:pattiWtPc*n('pattiQty')*pattiRate
     });
 
@@ -354,7 +553,7 @@
     items.push({
       part:'Gap Strip (Auto)', grade:materialName('gapStripMat'), qty:n('gapStripQty'), kind:'rect',
       length:autoGapStripL, width:autoGapStripW, thk:n('outerT'),
-      desc:`${num(autoGapStripL,0)} L × ${num(autoGapStripW,0)} W × ${num(n('outerT'),1)} T`,
+      desc:`${num(autoGapStripL,0)} × ${num(autoGapStripW,0)}`,
       wtpc:gapStripWtPc, totalWt:gapStripWtPc*n('gapStripQty'), rate:gapStripRate, cost:gapStripWtPc*n('gapStripQty')*gapStripRate
     });
 
@@ -443,15 +642,13 @@
     const tscale=Math.min(120/maxD,0.22);
     const tvI=innerD*tscale/2, tvJ=jacketD*tscale/2, tvO=outerD*tscale/2;
 
-    // Internal baffles (4 compartments)
     let baffles='';
     const nBaffles=4;
     for(let i=1; i<=nBaffles; i++){
       const y=topY + (hI/(nBaffles+1))*i;
-      baffles+=`<line x1="${cx-rI}" y1="${y}" x2="${cx+rI}" y2="${y}" stroke="#111" stroke-width="1.1" opacity="0.65"/>`;
+      baffles+=`<line x1="${cx-rI}" y1="${y}" x2="${cx+rI}" y2="${y}" stroke="#1e293b" stroke-width="1" opacity="0.3"/>`;
     }
 
-    // Impeller blades (8 blades)
     let impeller='';
     const nBlades=8;
     for(let i=0; i<nBlades; i++){
@@ -462,148 +659,88 @@
       const y1=topY+Math.sin(angle)*r1;
       const x2=cx+Math.cos(angle)*r2;
       const y2=topY+Math.sin(angle)*r2;
-      impeller+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#111" stroke-width="1.7"/>`;
+      impeller+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#0f172a" stroke-width="1.5"/>`;
     }
 
     const svg=document.getElementById('drawing');
     svg.innerHTML=`
     <defs>
       <style>
-        .inner{stroke:#111;stroke-width:2.4;fill:none}
-        .jacket{stroke:#111;stroke-width:2.4;fill:none;stroke-dasharray:10 6}
-        .outer{stroke:#111;stroke-width:4.2;fill:none}
-        .dim{stroke:#555;stroke-width:1.1;fill:none}
-        .txt{font:13px Arial;fill:#111;font-weight:600}
-        .small{font:11px Arial;fill:#333}
-        .title{font:bold 16px Arial;fill:#111}
-        .center{stroke:#ddd;stroke-width:1;stroke-dasharray:7 5}
-        .leg-rect{stroke:#111;stroke-width:2.2;fill:white}
-        .leg-base{stroke:#111;stroke-width:2.5;fill:#111}
-        .valve-circle{stroke:#333;stroke-width:1.8;fill:white}
-        .motor-rect{stroke:#111;stroke-width:1.8;fill:none}
-        .motor-fin{stroke:#111;stroke-width:1.4}
+        .inner{stroke:#0f172a;stroke-width:2;fill:none}
+        .jacket{stroke:#3b82f6;stroke-width:2;fill:none;stroke-dasharray:8 4}
+        .outer{stroke:#1e293b;stroke-width:4;fill:none}
+        .dim{stroke:#64748b;stroke-width:1;fill:none}
+        .txt{font:bold 12px var(--font-main);fill:#0f172a}
+        .small{font:10px var(--font-main);fill:#64748b}
+        .title{font:bold 14px var(--font-main);fill:#0f172a}
+        .center{stroke:#e2e8f0;stroke-width:1;stroke-dasharray:6 4}
+        .leg-rect{stroke:#0f172a;stroke-width:1.5;fill:white}
+        .leg-base{stroke:#0f172a;stroke-width:2;fill:#0f172a}
       </style>
     </defs>
 
-    <text x="35" y="35" class="title">FRONT ELEVATION</text>
+    <text x="35" y="35" class="title">ELEVATION VIEW</text>
     <line x1="${cx}" y1="50" x2="${cx}" y2="${legBottomY+25}" class="center"/>
 
-    <!-- Three shells with dished bottom -->
     <path d="M ${cx-rI} ${topY} L ${cx-rI} ${yBI} Q ${cx-rI} ${yBI+dI*0.65}, ${cx} ${yBI+dI} Q ${cx+rI} ${yBI+dI*0.65}, ${cx+rI} ${yBI} L ${cx+rI} ${topY}" class="inner"/>
     <path d="M ${cx-rJ} ${topY+pxH(jacketClear)} L ${cx-rJ} ${yBJ} Q ${cx-rJ} ${yBJ+dJ*0.65}, ${cx} ${yBJ+dJ} Q ${cx+rJ} ${yBJ+dJ*0.65}, ${cx+rJ} ${yBJ} L ${cx+rJ} ${topY+pxH(jacketClear)}" class="jacket"/>
     <path d="M ${cx-rO} ${topY+pxH(outerClear)} L ${cx-rO} ${yBO} Q ${cx-rO} ${yBO+dO*0.65}, ${cx} ${yBO+dO} Q ${cx+rO} ${yBO+dO*0.65}, ${cx+rO} ${yBO} L ${cx+rO} ${topY+pxH(outerClear)}" class="outer"/>
 
-    <!-- Internal baffles -->
     ${baffles}
-
-    <!-- Stirrer shaft -->
-    <line x1="${cx}" y1="${topY-40}" x2="${cx}" y2="${yBI+dI}" stroke="#111" stroke-width="2.2"/>
-
-    <!-- Impeller blades -->
+    <line x1="${cx}" y1="${topY-40}" x2="${cx}" y2="${yBI+dI}" stroke="#0f172a" stroke-width="2"/>
     ${impeller}
 
-    <!-- Top flat cover -->
-    <line x1="${cx-rO-20}" y1="${topY-2}" x2="${cx+rO+20}" y2="${topY-2}" stroke="#111" stroke-width="4"/>
-    <rect x="${cx-32}" y="${topY-72}" width="64" height="68" rx="9" class="motor-rect" stroke-width="1.8"/>
+    <line x1="${cx-rO-15}" y1="${topY-2}" x2="${cx+rO+15}" y2="${topY-2}" stroke="#0f172a" stroke-width="3"/>
+    <rect x="${cx-25}" y="${topY-65}" width="50" height="60" rx="4" fill="white" stroke="#0f172a" stroke-width="1.5"/>
+    <text x="${cx+35}" y="${topY-35}" class="small">Drive Unit</text>
 
-    <!-- Motor with cooling fins -->
-    <ellipse cx="${cx}" cy="${topY-36}" rx="30" ry="24" class="motor-rect" stroke-width="1.8"/>
-    <line x1="${cx-20}" y1="${topY-52}" x2="${cx-20}" y2="${topY-20}" class="motor-fin"/>
-    <line x1="${cx-10}" y1="${topY-57}" x2="${cx-10}" y2="${topY-15}" class="motor-fin"/>
-    <line x1="${cx}" y1="${topY-59}" x2="${cx}" y2="${topY-13}" class="motor-fin"/>
-    <line x1="${cx+10}" y1="${topY-57}" x2="${cx+10}" y2="${topY-15}" class="motor-fin"/>
-    <line x1="${cx+20}" y1="${topY-52}" x2="${cx+20}" y2="${topY-20}" class="motor-fin"/>
-    <text x="${cx+45}" y="${topY-32}" class="small">Motor</text>
-
-    <!-- Side inlet valve -->
-    <circle cx="${cx-rJ-10}" cy="${topY+hJ*0.28}" r="6" class="valve-circle"/>
-    <line x1="${cx-rJ-10}" y1="${topY+hJ*0.28-7}" x2="${cx-rJ-10}" y2="${topY+hJ*0.28+7}" stroke="#333" stroke-width="1.6"/>
-    <text x="${cx-rJ-45}" y="${topY+hJ*0.28+4}" class="small">Inlet</text>
-
-    <!-- Bottom discharge valve -->
-    <circle cx="${cx-rO-10}" cy="${yBI+dI-10}" r="6" class="valve-circle"/>
-    <line x1="${cx-rO-10}" y1="${yBI+dI-10-7}" x2="${cx-rO-10}" y2="${yBI+dI-10+7}" stroke="#333" stroke-width="1.6"/>
-    <text x="${cx-rO-55}" y="${yBI+dI-6}" class="small">Discharge</text>
-
-    <!-- Support leg columns (rectangular) -->
     <rect x="${legLeftX-legW/2}" y="${legTopY}" width="${legW}" height="${legH_px}" class="leg-rect"/>
     <rect x="${legRightX-legW/2}" y="${legTopY}" width="${legW}" height="${legH_px}" class="leg-rect"/>
+    <line x1="${legLeftX-25}" y1="${legBottomY}" x2="${legLeftX+25}" y2="${legBottomY}" class="leg-base"/>
+    <line x1="${legRightX-25}" y1="${legBottomY}" x2="${legRightX+25}" y2="${legBottomY}" class="leg-base"/>
 
-    <!-- Leg base -->
-    <line x1="${legLeftX-32}" y1="${legBottomY}" x2="${legLeftX+32}" y2="${legBottomY}" class="leg-base"/>
-    <line x1="${legRightX-32}" y1="${legBottomY}" x2="${legRightX+32}" y2="${legBottomY}" class="leg-base"/>
+    <line x1="${cx-rI}" y1="${topY+100}" x2="${cx+rI}" y2="${topY+100}" class="dim"/>
+    <text x="${cx}" y="${topY+95}" text-anchor="middle" class="txt">Ø${innerD}</text>
 
-    <!-- Dimensions -->
-    <line x1="${cx-rI}" y1="${topY+108}" x2="${cx+rI}" y2="${topY+108}" class="dim" stroke-width="1.2"/>
-    <line x1="${cx-rI}" y1="${topY+98}" x2="${cx-rI}" y2="${topY+118}" stroke="#555" stroke-width="1"/>
-    <line x1="${cx+rI}" y1="${topY+98}" x2="${cx+rI}" y2="${topY+118}" stroke="#555" stroke-width="1"/>
-    <text x="${cx}" y="${topY+105}" text-anchor="middle" class="txt">Ø${innerD}</text>
+    <line x1="${cx-rO}" y1="${topY+140}" x2="${cx+rO}" y2="${topY+140}" class="dim"/>
+    <text x="${cx}" y="${topY+135}" text-anchor="middle" class="txt">Ø${outerD}</text>
 
-    <line x1="${cx-rJ}" y1="${topY+152}" x2="${cx+rJ}" y2="${topY+152}" class="dim" stroke-width="1.2"/>
-    <line x1="${cx-rJ}" y1="${topY+142}" x2="${cx-rJ}" y2="${topY+162}" stroke="#555" stroke-width="1"/>
-    <line x1="${cx+rJ}" y1="${topY+142}" x2="${cx+rJ}" y2="${topY+162}" stroke="#555" stroke-width="1"/>
-    <text x="${cx}" y="${topY+150}" text-anchor="middle" class="txt">Ø${jacketD}</text>
+    <text x="480" y="80" class="small">Straight H: ${innerH}mm</text>
+    <text x="480" y="100" class="small">Dish Depth: ${m.dish}mm</text>
+    <text x="480" y="120" class="small">Leg Height: ${legH}mm</text>
 
-    <line x1="${cx-rO}" y1="${topY+196}" x2="${cx+rO}" y2="${topY+196}" class="dim" stroke-width="1.2"/>
-    <line x1="${cx-rO}" y1="${topY+186}" x2="${cx-rO}" y2="${topY+206}" stroke="#555" stroke-width="1"/>
-    <line x1="${cx+rO}" y1="${topY+186}" x2="${cx+rO}" y2="${topY+206}" stroke="#555" stroke-width="1"/>
-    <text x="${cx}" y="${topY+194}" text-anchor="middle" class="txt">Ø${outerD}</text>
-
-    <!-- Annotations -->
-    <text x="470" y="100" class="txt">Inner Height = ${innerH} mm</text>
-    <text x="470" y="125" class="txt">Jacket Top Clear = ${jacketClear} mm</text>
-    <text x="470" y="150" class="txt">Outer Top Clear = ${outerClear} mm</text>
-    <text x="470" y="175" class="txt">Bottom Dish = ${m.dish} mm</text>
-    <text x="470" y="200" class="txt">Leg Height = ${legH} mm</text>
-    <text x="470" y="225" class="txt">Baffles = 4 | Impeller = 8 Blades</text>
-
-    <!-- TOP VIEW -->
-    <text x="680" y="35" class="title">TOP VIEW (PLAN)</text>
-
+    <text x="680" y="35" class="title">PLAN VIEW</text>
     <circle cx="${tvx}" cy="${tvy}" r="${tvO}" class="outer"/>
     <circle cx="${tvx}" cy="${tvy}" r="${tvJ}" class="jacket"/>
     <circle cx="${tvx}" cy="${tvy}" r="${tvI}" class="inner"/>
-
-    <line x1="${tvx-tvO-28}" y1="${tvy}" x2="${tvx+tvO+28}" y2="${tvy}" class="center" stroke-width="1"/>
-    <line x1="${tvx}" y1="${tvy-tvO-28}" x2="${tvx}" y2="${tvy+tvO+28}" class="center" stroke-width="1"/>
-
-    ${[...Array(8)].map((_, i)=>{
-      const angle=(i/8)*Math.PI*2;
-      const r1=tvI*0.40;
-      const r2=tvI*0.75;
-      const x1=tvx+Math.cos(angle)*r1;
-      const y1=tvy+Math.sin(angle)*r1;
-      const x2=tvx+Math.cos(angle)*r2;
-      const y2=tvy+Math.sin(angle)*r2;
-      return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#111" stroke-width="1.8"/>`;
-    }).join('')}
-
-    <circle cx="${tvx+tvJ+12}" cy="${tvy}" r="3.5" fill="none" stroke="#333" stroke-width="1.6"/>
-    <text x="${tvx+tvJ+22}" y="${tvy+4}" class="small">In</text>
-
-    <circle cx="${tvx-tvJ-12}" cy="${tvy}" r="3.5" fill="none" stroke="#333" stroke-width="1.6"/>
-    <text x="${tvx-tvJ-32}" y="${tvy+4}" class="small">Out</text>
-
-    <text x="${tvx}" y="${tvy+tvO+42}" text-anchor="middle" class="txt">Ø${innerD} / Ø${jacketD} / Ø${outerD}</text>
+    <line x1="${tvx-tvO-20}" y1="${tvy}" x2="${tvx+tvO+20}" y2="${tvy}" class="center"/>
+    <line x1="${tvx}" y1="${tvy-tvO-20}" x2="${tvx}" y2="${tvy+tvO+20}" class="center"/>
     `;
   }
 
   function saveData(){
     const obj={}; ids.forEach(id=>obj[id]=document.getElementById(id).value);
-    localStorage.setItem('veerPharmaCalc', JSON.stringify(obj));
-    alert('Values saved in this browser.');
+    localStorage.setItem('veerPharmaCalc_v2', JSON.stringify(obj));
+    alert('Project state saved successfully.');
   }
   function loadData(){
     try{
-      const obj = JSON.parse(localStorage.getItem('veerPharmaCalc') || '{}');
+      const obj = JSON.parse(localStorage.getItem('veerPharmaCalc_v2') || '{}');
       ids.forEach(id=>{ if(obj[id]!==undefined) document.getElementById(id).value=obj[id]; });
     }catch(e){}
   }
   function resetData(){
-    localStorage.removeItem('veerPharmaCalc');
-    location.reload();
+    if(confirm('Reset all values to default?')) {
+      localStorage.removeItem('veerPharmaCalc_v2');
+      location.reload();
+    }
   }
-  ids.forEach(id=>document.getElementById(id).addEventListener('input', update));
+
+  ids.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.addEventListener('input', update);
+  });
+
   loadData();
   update();
 </script>
