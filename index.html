@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Veer Pharma - Jacketed Vessel Auto Calculator</title>
+<style>
+:root{
+  --bg:#f5f7fa; --card:#ffffff; --ink:#111827; --muted:#6b7280; --line:#d1d5db;
+  --accent:#0f766e; --accent2:#1d4ed8; --input:#fff7cc; --ok:#ecfdf5;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
+header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);padding:12px 16px}
+.header-row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+h1{font-size:20px;margin:0}.sub{font-size:12px;color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+button{border:0;border-radius:8px;padding:10px 12px;font-weight:700;cursor:pointer}
+.primary{background:var(--accent);color:white}.secondary{background:#e5e7eb}.danger{background:#fee2e2;color:#991b1b}
+main{padding:14px;max-width:1500px;margin:auto}
+.grid{display:grid;grid-template-columns:minmax(340px,520px) 1fr;gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.card h2{font-size:16px;margin:0 0 10px}.card h3{font-size:14px;margin:16px 0 8px}
+.formgrid{display:grid;grid-template-columns:1.5fr 1fr .75fr;gap:7px;align-items:center}
+.formgrid label{font-size:13px}.unit{font-size:12px;color:var(--muted)}
+input,select{width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:7px;background:var(--input);font-size:14px}
+input[readonly]{background:#f3f4f6;color:#374151}
+hr{border:0;border-top:1px solid #e5e7eb;margin:14px 0}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:8px;margin:10px 0}
+.kpi{background:var(--ok);border:1px solid #bbf7d0;border-radius:9px;padding:10px}
+.kpi small{display:block;color:#4b5563}.kpi strong{font-size:17px}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{border:1px solid #d1d5db;padding:6px;text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{background:#f3f4f6}
+.total-row{font-weight:700;background:#f0fdf4}
+svg{width:100%;height:auto;background:white;border:1px solid #d1d5db;border-radius:10px}
+.sheet-container{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;margin:12px 0}
+.linekey{display:flex;align-items:center;gap:6px}
+.line{width:30px;border-top:2px solid #111}.dash{border-top-style:dashed}.thick{border-top-width:4px}
+.note{font-size:12px;color:#4b5563;line-height:1.45}
+footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  header{position:static}
+}
+@media print{
+  header,.no-print{display:none!important}
+  body{background:#fff}
+  main{max-width:none;padding:0}
+  .grid{grid-template-columns:1fr}
+  .card{box-shadow:none;border:0;page-break-inside:avoid}
+  input,select{border:0;background:white}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-row">
+    <div>
+      <h1>VEER PHARMA — Jacketed Vessel Auto Calculator + Drawing</h1>
+      <div class="sub">PC / Mobile browser में चलता है • Offline single-file calculator</div>
+    </div>
+    <div class="actions">
+      <button class="primary" onclick="window.print()">Print / Save PDF</button>
+      <button class="secondary" onclick="saveData()">Save Values</button>
+      <button class="danger" onclick="resetData()">Reset</button>
+    </div>
+  </div>
+</header>
+
+<main>
+<div class="grid">
+  <section class="card">
+    <h2>1) Size / Material Input</h2>
+    <div class="formgrid">
+      <label>Inner Shell Diameter</label><input id="innerD" type="number" step="1" value="500"><span class="unit">mm</span>
+      <label>Jacket Diameter</label><input id="jacketD" type="number" step="1" value="580"><span class="unit">mm</span>
+      <label>Insulation / Outer Diameter</label><input id="outerD" type="number" step="1" value="680"><span class="unit">mm</span>
+      <label>Inner Straight Height</label><input id="innerH" type="number" step="1" value="650"><span class="unit">mm</span>
+      <label>Jacket Top Clearance</label><input id="jacketClear" type="number" step="1" value="150"><span class="unit">mm</span>
+      <label>Insulation Top Clearance</label><input id="outerClear" type="number" step="1" value="100"><span class="unit">mm</span>
+      <label>Bottom Dish Depth</label><input id="dishDepth" type="number" step="1" value="120"><span class="unit">mm</span>
+      <label>Leg Height</label><input id="legH" type="number" step="1" value="450"><span class="unit">mm</span>
+
+      <label>Inner Thickness</label><input id="innerT" type="number" step="0.1" value="3"><span class="unit">mm</span>
+      <label>Jacket Thickness</label><input id="jacketT" type="number" step="0.1" value="3"><span class="unit">mm</span>
+      <label>Outer Thickness</label><input id="outerT" type="number" step="0.1" value="2"><span class="unit">mm</span>
+
+      <label>Inner Material</label>
+      <select id="innerMat"><option value="8000">SS 316 (8000 kg/m³)</option><option value="7930">SS 304 (7930 kg/m³)</option><option value="7850">MS (7850 kg/m³)</option></select><span></span>
+      <label>Jacket Material</label>
+      <select id="jacketMat"><option value="7930">SS 304 (7930 kg/m³)</option><option value="8000">SS 316 (8000 kg/m³)</option><option value="7850">MS (7850 kg/m³)</option></select><span></span>
+      <label>Outer Material</label>
+      <select id="outerMat"><option value="7930">SS 304 (7930 kg/m³)</option><option value="8000">SS 316 (8000 kg/m³)</option><option value="7850">MS (7850 kg/m³)</option></select><span></span>
+    </div>
+
+    <h3>Auto Calculated Shell Size</h3>
+    <div class="kpis">
+      <div class="kpi"><small>Inner Cut Length</small><strong id="kInnerL">–</strong></div>
+      <div class="kpi"><small>Jacket Cut Length</small><strong id="kJacketL">–</strong></div>
+      <div class="kpi"><small>Outer Cut Length</small><strong id="kOuterL">–</strong></div>
+      <div class="kpi"><small>Total Shell Weight</small><strong id="kShellWt">–</strong></div>
+    </div>
+
+    <h3>2) Material Rates</h3>
+    <div class="formgrid">
+      <label>SS316 Rate / kg</label><input id="rate316" type="number" value="300"><span class="unit">₹/kg</span>
+      <label>SS304 Rate / kg</label><input id="rate304" type="number" value="240"><span class="unit">₹/kg</span>
+      <label>MS Rate / kg</label><input id="rateMS" type="number" value="75"><span class="unit">₹/kg</span>
+      <label>Fabrication Rate</label><input id="fabRate" type="number" value="120"><span class="unit">₹/kg</span>
+      <label>Polishing Rate</label><input id="polishRate" type="number" value="60"><span class="unit">₹/kg</span>
+    </div>
+
+    <h3>3) Other Parts / Bought-out Cost</h3>
+    <div class="formgrid">
+      <label>Motor + Gearbox</label><input id="motorCost" type="number" value="12000"><span class="unit">₹</span>
+      <label>Heater Total</label><input id="heaterCost" type="number" value="6000"><span class="unit">₹</span>
+      <label>Digital Panel</label><input id="panelCost" type="number" value="4500"><span class="unit">₹</span>
+      <label>Valves / TC / Fittings</label><input id="fittingCost" type="number" value="8500"><span class="unit">₹</span>
+      <label>Legs / Base / Misc.</label><input id="miscCost" type="number" value="4000"><span class="unit">₹</span>
+      <label>Other Cost</label><input id="otherCost" type="number" value="0"><span class="unit">₹</span>
+    </div>
+
+    <h3>4) Final Costing</h3>
+    <div class="formgrid">
+      <label>Overhead</label><input id="overheadPct" type="number" value="10"><span class="unit">%</span>
+      <label>Profit</label><input id="profitPct" type="number" value="20"><span class="unit">%</span>
+      <label>GST</label><input id="gstPct" type="number" value="18"><span class="unit">%</span>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><small>Material Cost</small><strong id="kMaterialCost">–</strong></div>
+      <div class="kpi"><small>Before GST</small><strong id="kBeforeGST">–</strong></div>
+      <div class="kpi"><small>GST</small><strong id="kGST">–</strong></div>
+      <div class="kpi"><small>Final Price</small><strong id="kFinal">–</strong></div>
+    </div>
+    <p class="note"><b>Formula:</b> Shell cut length = π × D. Cylindrical shell weight ≈ π × D × H × T × Density ÷ 1,000,000,000. Bottom dish, lid and special formed parts are not included in shell weight unless added in “Other Cost”.</p>
+  </section>
+
+  <section>
+    <div class="card">
+      <h2>Technical Drawing — Auto Update</h2>
+      <div class="legend">
+        <div class="linekey"><span class="line" style="border-color:#000"></span>Inner Vessel</div>
+        <div class="linekey"><span class="line" style="border-color:#007bff"></span>Jacket</div>
+        <div class="linekey"><span class="line dash" style="border-color:#dc3545"></span>Insulation</div>
+        <div class="linekey"><span class="line" style="border-color:#d63384"></span>Dimensions</div>
+      </div>
+      <div class="sheet-container">
+        <svg id="drawing" viewBox="0 0 1000 750" aria-label="Dynamic vessel drawing"></svg>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h2>Auto Material / Cost Summary</h2>
+      <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Part</th><th>Dia (mm)</th><th>Height (mm)</th><th>Thk (mm)</th><th>Cut L (mm)</th><th>Weight (kg)</th><th>Rate/kg</th><th>Material Cost</th>
+          </tr>
+        </thead>
+        <tbody id="summaryBody"></tbody>
+        <tfoot>
+          <tr class="total-row"><td colspan="5">TOTAL</td><td id="tblTotalWt"></td><td></td><td id="tblTotalCost"></td></tr>
+        </tfoot>
+      </table>
+      </div>
+      <h3>Price Build-up</h3>
+      <div class="table-wrap">
+      <table>
+        <tbody>
+          <tr><td>Shell Material</td><td id="cMaterial"></td></tr>
+          <tr><td>Fabrication</td><td id="cFab"></td></tr>
+          <tr><td>Polishing</td><td id="cPolish"></td></tr>
+          <tr><td>Bought-out / Other Parts</td><td id="cBought"></td></tr>
+          <tr><td>Overhead</td><td id="cOverhead"></td></tr>
+          <tr><td>Profit</td><td id="cProfit"></td></tr>
+          <tr class="total-row"><td>Price Before GST</td><td id="cBefore"></td></tr>
+          <tr><td>GST</td><td id="cGST"></td></tr>
+          <tr class="total-row"><td>FINAL PRICE</td><td id="cFinal"></td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </section>
+</div>
+</main>
+<footer>VEER PHARMA • 100 L Jacketed Vessel Calculator • Values are editable and saved in your browser.</footer>
+
+<script>
+const ids = [
+'innerD','jacketD','outerD','innerH','jacketClear','outerClear','dishDepth','legH',
+'innerT','jacketT','outerT','innerMat','jacketMat','outerMat','rate316','rate304','rateMS',
+'fabRate','polishRate','motorCost','heaterCost','panelCost','fittingCost','miscCost','otherCost',
+'overheadPct','profitPct','gstPct'
+];
+
+function n(id){return parseFloat(document.getElementById(id).value)||0}
+function money(v){return '₹ ' + Math.round(v).toLocaleString('en-IN')}
+function num(v,d=1){return Number(v).toLocaleString('en-IN',{maximumFractionDigits:d})}
+const fmt = (x,d=2) => (Math.round(x*10**d)/10**d).toLocaleString(undefined,{maximumFractionDigits:d});
+
+function headVolume(Dm, hm){
+  const r = Dm/2;
+  if(hm<=0) return 0;
+  return (2/3)*Math.PI*r*r*hm;
+}
+
+function totalVolLiters(D,H,td,bd){
+  const r = D/2000;
+  return Math.round((Math.PI*r*r*(H/1000) + headVolume(D/1000, td/1000) + headVolume(D/1000, bd/1000))*1000);
+}
+
+let BOM_DATA = [], CUT_DATA = [], HEIGHT_DATA = [], NOZZLE_DATA = [];
+
+function drawTable(x, y, title, headers, data, colWidths) {
+  let out = `<g transform="translate(${x},${y})">`;
+  out += `<text x="0" y="-10" font-size="12" font-weight="800" fill="#333" stroke="none">${title}</text>`;
+  let curX = 0;
+  headers.forEach((h, i) => {
+    out += `<rect x="${curX}" y="0" width="${colWidths[i]}" height="22" fill="#f8fafc" stroke="#cbd5e1"/>`;
+    out += `<text x="${curX + colWidths[i]/2}" y="15" text-anchor="middle" font-size="10" font-weight="700" fill="#333" stroke="none">${h}</text>`;
+    curX += colWidths[i];
+  });
+  data.forEach((row, rowIndex) => {
+    curX = 0;
+    row.forEach((cell, i) => {
+      out += `<rect x="${curX}" y="${22 + rowIndex*20}" width="${colWidths[i]}" height="20" fill="none" stroke="#e2e8f0"/>`;
+      out += `<text x="${curX + 5}" y="${35 + rowIndex*20}" font-size="9" fill="#475569" stroke="none">${cell}</text>`;
+      curX += colWidths[i];
+    });
+  });
+  return out + `</g>`;
+}
+
+function matRate(matId){
+  const rho=n(matId);
+  if(Math.abs(rho-8000)<20) return n('rate316');
+  if(Math.abs(rho-7930)<20) return n('rate304');
+  return n('rateMS');
+}
+function shellData(){
+  const innerH=n('innerH');
+  return [
+    {name:'Inner Shell', d:n('innerD'), h:innerH, t:n('innerT'), rho:n('innerMat'), rate:matRate('innerMat'), cls:'inner'},
+    {name:'Jacket Shell', d:n('jacketD'), h:Math.max(0,innerH-n('jacketClear')), t:n('jacketT'), rho:n('jacketMat'), rate:matRate('jacketMat'), cls:'jacket'},
+    {name:'Insulation / Outer', d:n('outerD'), h:Math.max(0,innerH-n('outerClear')), t:n('outerT'), rho:n('outerMat'), rate:matRate('outerMat'), cls:'outer'}
+  ].map(x=>{
+    x.cut=Math.PI*x.d;
+    x.wt=Math.PI*x.d*x.h*x.t*x.rho/1e9;
+    x.cost=x.wt*x.rate;
+    return x;
+  });
+}
+function update(){
+  const data=shellData();
+  const totalWt=data.reduce((a,b)=>a+b.wt,0);
+  const material=data.reduce((a,b)=>a+b.cost,0);
+  const fab=totalWt*n('fabRate');
+  const polish=totalWt*n('polishRate');
+  const bought=n('motorCost')+n('heaterCost')+n('panelCost')+n('fittingCost')+n('miscCost')+n('otherCost');
+  const base=material+fab+polish+bought;
+  const overhead=base*n('overheadPct')/100;
+  const profit=(base+overhead)*n('profitPct')/100;
+  const before=base+overhead+profit;
+  const gst=before*n('gstPct')/100;
+  const final=before+gst;
+
+  // Prepare drawing data
+  const D = n('innerD'), jD = n('jacketD'), iD = n('outerD');
+  const H = n('innerH'), jC = n('jacketClear'), iC = n('outerClear');
+  const tD = n('dishDepth');
+  const moc = document.getElementById('innerMat').selectedOptions[0].text.split(' ')[0];
+
+  BOM_DATA = [
+    ["1", "INNER SHELL", moc, n('innerT')+"mm", fmt(D)+"Ø x "+fmt(H)+"H", "1"],
+    ["2", "JACKET SHELL", moc, n('jacketT')+"mm", fmt(jD)+"Ø x "+fmt(H-jC)+"H", "1"],
+    ["3", "INSULATION", "Glasswool", n('outerT')+"mm", fmt(iD)+"Ø", "1"],
+    ["4", "PIPE LEGS", moc, "Sch 40", "Ø 60.3mm", "4"]
+  ];
+
+  HEIGHT_DATA = [
+    ["INNER SHELL H", fmt(H) + " mm"],
+    ["JACKET CLEAR", fmt(jC) + " mm"],
+    ["DISH DEPTH", fmt(tD) + " mm"],
+    ["LEG HEIGHT", fmt(n('legH')) + " mm"]
+  ];
+
+  NOZZLE_DATA = [
+    ["N1", "INLET", "50mm", "TC", "1", "TOP"],
+    ["N2", "OUTLET", "40mm", "VALVE", "1", "BOT"],
+    ["N3", "HEATER", "2KW", "FLG", "2", "SIDE"]
+  ];
+
+  document.getElementById('kInnerL').textContent=num(data[0].cut,0)+' mm';
+  document.getElementById('kJacketL').textContent=num(data[1].cut,0)+' mm';
+  document.getElementById('kOuterL').textContent=num(data[2].cut,0)+' mm';
+  document.getElementById('kShellWt').textContent=num(totalWt,2)+' kg';
+  document.getElementById('kMaterialCost').textContent=money(material);
+  document.getElementById('kBeforeGST').textContent=money(before);
+  document.getElementById('kGST').textContent=money(gst);
+  document.getElementById('kFinal').textContent=money(final);
+
+  document.getElementById('summaryBody').innerHTML=data.map(x=>`
+    <tr><td>${x.name}</td><td>${num(x.d,0)}</td><td>${num(x.h,0)}</td><td>${num(x.t,1)}</td>
+    <td>${num(x.cut,0)}</td><td>${num(x.wt,2)}</td><td>${money(x.rate)}</td><td>${money(x.cost)}</td></tr>`).join('');
+  document.getElementById('tblTotalWt').textContent=num(totalWt,2);
+  document.getElementById('tblTotalCost').textContent=money(material);
+  document.getElementById('cMaterial').textContent=money(material);
+  document.getElementById('cFab').textContent=money(fab);
+  document.getElementById('cPolish').textContent=money(polish);
+  document.getElementById('cBought').textContent=money(bought);
+  document.getElementById('cOverhead').textContent=money(overhead);
+  document.getElementById('cProfit').textContent=money(profit);
+  document.getElementById('cBefore').textContent=money(before);
+  document.getElementById('cGST').textContent=money(gst);
+  document.getElementById('cFinal').textContent=money(final);
+
+  drawVessel();
+}
+function drawVessel(){
+  const svg=document.getElementById('drawing');
+  const D = n('innerD'), jD = n('jacketD'), iD = n('outerD');
+  const H = n('innerH'), jC = n('jacketClear'), iC = n('outerClear');
+  const dish = n('dishDepth'), legH = n('legH');
+
+  const jH = Math.max(0, H - jC);
+  const iH = Math.max(0, H - iC);
+
+  const maxD = Math.max(iD, 1);
+  const maxH = Math.max(H + dish + legH, 1);
+  const scale = Math.min(480/maxD, 500/maxH);
+
+  const cx = 520, topY = 150;
+  const left = cx - (D*scale)/2, right = cx + (D*scale)/2;
+  const bottomY = topY + H*scale;
+
+  const jLeft = cx - (jD*scale)/2, jRight = cx + (jD*scale)/2;
+  const iLeft = cx - (iD*scale)/2, iRight = cx + (iD*scale)/2;
+
+  function leader(x1, y1, x2, y2, label, anchor='start') {
+    return `<g stroke="#666" stroke-width="1"><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/><text x="${x2 + (anchor==='start'?5:-5)}" y="${y2+4}" text-anchor="${anchor}" fill="#333" font-size="11" font-weight="600" stroke="none">${label}</text></g>`;
+  }
+
+  function dimLine(x1, y1, x2, y2, label, offset = 0, horizontal = true) {
+    let ox1 = x1, oy1 = y1, ox2 = x2, oy2 = y2;
+    if (horizontal) { oy1 += offset; oy2 += offset; } else { ox1 += offset; ox2 += offset; }
+    let out = `<g stroke="#d63384" stroke-width="1.2">
+      <line x1="${ox1}" y1="${oy1}" x2="${ox2}" y2="${oy2}"/>
+      <line x1="${x1}" y1="${y1}" x2="${ox1}" y2="${oy1 + (horizontal? (offset > 0 ? 5 : -5) : 0)}"/>
+      <line x1="${x2}" y1="${y2}" x2="${ox2}" y2="${oy2 + (horizontal? (offset > 0 ? 5 : -5) : 0)}"/>
+      <path d="M${ox1} ${oy1} l${horizontal?'7 -2.5 v5':'2.5 7 h-5'} z" fill="#d63384"/>
+      <path d="M${ox2} ${oy2} l${horizontal?'-7 -2.5 v5':'-2.5 -7 h5'} z" fill="#d63384"/>
+      <text x="${(ox1+ox2)/2}" y="${(oy1+oy2)/2 - 5}" text-anchor="middle" fill="#d63384" font-size="12" font-weight="700" stroke="none">${label}</text>
+    </g>`;
+    return out;
+  }
+
+  let out = `
+  <rect x="5" y="5" width="990" height="740" fill="none" stroke="#e5e7eb" stroke-width="1"/>
+
+  <!-- Header Title -->
+  <text x="500" y="40" text-anchor="middle" font-size="18" font-weight="900" fill="#111" stroke="none">${totalVolLiters(D,H,dish,dish)} LITRES JACKETED VESSEL</text>
+  <text x="500" y="60" text-anchor="middle" font-size="14" font-weight="700" fill="#444" stroke="none">WITH TOP MOUNTED MOTOR</text>
+
+  <!-- Tables -->
+  ${drawTable(680, 80, "BILL OF MATERIAL", ["Sr", "Item", "Mat", "Thk", "Size", "Qty"], BOM_DATA, [25, 80, 50, 40, 80, 25])}
+  ${drawTable(50, 550, "HEIGHT SUMMARY", ["Description", "Dimension"], HEIGHT_DATA, [150, 80])}
+  ${drawTable(300, 550, "NOZZLE SCHEDULE", ["Mark", "Service", "Size", "Type", "Qty", "Loc"], NOZZLE_DATA, [35, 60, 50, 40, 30, 40])}
+
+  <!-- SIDE VIEW -->
+  <!-- Insulation (Red Dashed) -->
+  <path d="M ${iLeft} ${topY + iC*scale} L ${iLeft} ${bottomY} C ${iLeft} ${bottomY+dish*scale*0.45}, ${cx-iD*scale*0.27} ${bottomY+dish*scale}, ${cx} ${bottomY+dish*scale} C ${cx+iD*scale*0.27} ${bottomY+dish*scale}, ${iRight} ${bottomY+dish*scale*0.45}, ${iRight} ${bottomY} L ${iRight} ${topY + iC*scale}" fill="none" stroke="#dc3545" stroke-width="2.5" stroke-dasharray="6,4"/>
+
+  <!-- Jacket (Blue) -->
+  <path d="M ${jLeft} ${topY + jC*scale} L ${jLeft} ${bottomY} C ${jLeft} ${bottomY+dish*scale*0.45}, ${cx-jD*scale*0.27} ${bottomY+dish*scale}, ${cx} ${bottomY+dish*scale} C ${cx+jD*scale*0.27} ${bottomY+dish*scale}, ${jRight} ${bottomY+dish*scale*0.45}, ${jRight} ${bottomY} L ${jRight} ${topY + jC*scale}" fill="none" stroke="#007bff" stroke-width="2"/>
+
+  <!-- Inner (Black) -->
+  <path d="M ${left} ${topY} L ${left} ${bottomY} C ${left} ${bottomY+dish*scale*0.45}, ${cx-D*scale*0.27} ${bottomY+dish*scale}, ${cx} ${bottomY+dish*scale} C ${cx+D*scale*0.27} ${bottomY+dish*scale}, ${right} ${bottomY+dish*scale*0.45}, ${right} ${bottomY} L ${right} ${topY}" fill="none" stroke="#000" stroke-width="2.5"/>
+  <line x1="${left}" y1="${topY}" x2="${right}" y2="${topY}" stroke="#000" stroke-width="2.5"/>
+
+  <!-- Mechanical Detailing -->
+  <rect x="${cx-20}" y="${topY-85}" width="40" height="65" fill="none" stroke="#000" stroke-width="1.5"/>
+  <rect x="${cx-28}" y="${topY-20}" width="56" height="20" fill="none" stroke="#000" stroke-width="1.5"/>
+
+  <!-- Legs -->
+  <g stroke="#000" fill="none" stroke-width="8">
+    <line x1="${left+20}" y1="${bottomY+dish*scale}" x2="${left+20}" y2="${bottomY+dish*scale+legH*scale}"/>
+    <line x1="${right-20}" y1="${bottomY+dish*scale}" x2="${right-20}" y2="${bottomY+dish*scale+legH*scale}"/>
+  </g>
+  <line x1="${left+5}" y1="${bottomY+dish*scale+legH*scale}" x2="${left+35}" y2="${bottomY+dish*scale+legH*scale}" stroke="#000" stroke-width="4"/>
+  <line x1="${right-35}" y1="${bottomY+dish*scale+legH*scale}" x2="${right-5}" y2="${bottomY+dish*scale+legH*scale}" stroke="#000" stroke-width="4"/>
+
+  <!-- Labels -->
+  ${leader(cx-30, topY-10, cx-120, topY-40, "40 x 8 PLATE", "end")}
+  ${leader(cx+30, topY-5, cx+120, topY-35, "LID 2mm", "start")}
+  ${leader(cx, topY-85, cx+50, topY-110, "TOP MOUNTED MOTOR", "start")}
+  ${leader(left, topY+50, left-80, topY+30, "50mm (1.5\\" TC)", "end")}
+  ${leader(left, bottomY-40, left-80, bottomY-60, "HEATER 2KW", "end")}
+
+  <!-- Vertical Height Stack -->
+  ${dimLine(right+30, topY, right+30, topY+jC*scale, jC + " (CLEAR)", 0, false)}
+  ${dimLine(right+70, topY, right+70, bottomY, "SHELL H = " + H, 0, false)}
+  ${dimLine(right+110, topY+jC*scale, right+110, bottomY, "JACKET H = " + jH, 0, false)}
+  ${dimLine(right+30, bottomY+dish*scale, right+30, bottomY+dish*scale+legH*scale, "LEG H = " + legH, 0, false)}
+
+  <!-- Internal Diameters -->
+  ${dimLine(left, topY+H*scale/3, right, topY+H*scale/3, "Ø " + D, 0)}
+  ${dimLine(jLeft, bottomY-jH*scale/2, jRight, bottomY-jH*scale/2, "Ø " + jD, 0)}
+
+  <!-- TOP VIEW (Top-Left) -->
+  <g transform="translate(180, 180)">
+    <circle cx="0" cy="0" r="${(D*scale)/2}" fill="none" stroke="#000" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="${(jD*scale)/2}" fill="none" stroke="#007bff" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="${(iD*scale)/2}" fill="none" stroke="#dc3545" stroke-width="2" stroke-dasharray="4,2"/>
+    <line x1="-100" y1="0" x2="100" y2="0" stroke="#eee" stroke-dasharray="2"/>
+    <line x1="0" y1="-100" x2="0" y2="100" stroke="#eee" stroke-dasharray="2"/>
+    <text x="0" y="130" text-anchor="middle" font-size="12" font-weight="800">TOP VIEW</text>
+  </g>
+  `;
+  svg.innerHTML=out;
+}
+function saveData(){
+  const obj={}; ids.forEach(id=>obj[id]=document.getElementById(id).value);
+  localStorage.setItem('veerVesselCalc',JSON.stringify(obj));
+  alert('Values saved in this browser.');
+}
+function loadData(){
+  try{
+    const obj=JSON.parse(localStorage.getItem('veerVesselCalc')||'{}');
+    ids.forEach(id=>{if(obj[id]!==undefined) document.getElementById(id).value=obj[id]});
+  }catch(e){}
+}
+function resetData(){
+  localStorage.removeItem('veerVesselCalc');
+  location.reload();
+}
+ids.forEach(id=>document.getElementById(id).addEventListener('input',update));
+loadData();
+update();
+</script>
+</body>
+</html>
