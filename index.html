@@ -627,9 +627,9 @@
     const maxD=Math.max(innerD,jacketD,outerD,1);
     const maxBottom=Math.max(m.dish,m.jDepth,m.oDepth);
     const maxH=Math.max(innerH+maxBottom+legH,1);
-    const scale=Math.min(380/maxD, 420/maxH);
+    const scale=Math.min(380/maxD, 400/maxH);
 
-    const cx=300, topY=120;
+    const cx=300, topY=140;
     const pxD=d=>d*scale, pxH=h=>h*scale;
     const rI=pxD(innerD)/2, rJ=pxD(jacketD)/2, rO=pxD(outerD)/2;
     const hI=pxH(innerH), hJ=pxH(Math.max(0,innerH-jacketClear)), hO=pxH(Math.max(0,innerH-outerClear));
@@ -637,123 +637,174 @@
 
     const yBI=topY+hI, yBJ=topY+pxH(jacketClear)+hJ, yBO=topY+pxH(outerClear)+hO;
 
-    const legW=pxD(n('legPipeOD')) || 20, legH_px=pxH(legH);
-    const legLeftX = cx - rJ*0.75;
-    const legRightX = cx + rJ*0.75;
+    const legW=pxD(n('legPipeOD')) || 22, legH_px=pxH(legH);
+    const legLeftX = cx - rJ*0.78;
+    const legRightX = cx + rJ*0.78;
 
-    const legArcOffset = Math.sqrt(Math.max(0, dJ*dJ * (1 - Math.pow(0.75, 2))));
+    const legArcOffset = Math.sqrt(Math.max(0, dJ*dJ * (1 - Math.pow(0.78, 2))));
     const legTopY = yBJ + (dJ - legArcOffset);
     const legBottomY = legTopY + legH_px;
 
-    const tvx=750, tvy=180;
-    const tscale=Math.min(160/maxD,0.35);
+    const tvx=760, tvy=200;
+    const tscale=Math.min(160/maxD,0.38);
     const tvI=innerD*tscale/2, tvJ=jacketD*tscale/2, tvO=outerD*tscale/2;
-
-    let baffles='';
-    const nBaffles=4;
-    for(let i=1; i<=nBaffles; i++){
-      const y=topY + (hI/(nBaffles+1))*i;
-      baffles+=`<line x1="${cx-rI}" y1="${y}" x2="${cx+rI}" y2="${y}" class="hidden" opacity="0.4"/>`;
-    }
-
-    let impeller='';
-    const nBlades=6;
-    for(let i=0; i<nBlades; i++){
-      const angle=(i/nBlades)*Math.PI*2;
-      const r1=rI*0.3, r2=rI*0.7;
-      const x1=cx+Math.cos(angle)*r1, y1=topY+Math.sin(angle)*r1;
-      const x2=cx+Math.cos(angle)*r2, y2=topY+Math.sin(angle)*r2;
-      impeller+=`<line x1="${x1}" y1="${y1 + hI*0.8}" x2="${x2}" y2="${y2 + hI*0.8}" class="primary"/>`;
-    }
 
     const svg=document.getElementById('drawing');
     svg.innerHTML=`
     <defs>
       <style>
-        .primary{stroke:#0f172a;stroke-width:1.2;fill:none}
-        .jacket-line{stroke:#0f172a;stroke-width:1.2;fill:none;stroke-dasharray:10 4}
-        .outer-line{stroke:#1e293b;stroke-width:2.5;fill:none}
-        .hidden{stroke:#94a3b8;stroke-width:0.8;fill:none;stroke-dasharray:4 4}
-        .center-line{stroke:#64748b;stroke-width:0.8;fill:none;stroke-dasharray:25 5 5 5}
+        .primary{stroke:#0f172a;stroke-width:1.3;fill:none;stroke-linejoin:round}
+        .jacket-line{stroke:#0f172a;stroke-width:1;fill:none;stroke-dasharray:8 4}
+        .outer-line{stroke:#1e293b;stroke-width:1.8;fill:none}
+        .seam{stroke:#94a3b8;stroke-width:0.8;fill:none}
+        .center-line{stroke:#64748b;stroke-width:0.8;fill:none;stroke-dasharray:30 6 6 6}
         .dim-line{stroke:#94a3b8;stroke-width:0.8;fill:none}
         .txt{font:bold 12px var(--font-main);fill:#0f172a}
         .small-txt{font:10px var(--font-main);fill:#64748b}
-        .flange{fill:#fff;stroke:#0f172a;stroke-width:1.2}
+        .flange{fill:#fff;stroke:#0f172a;stroke-width:1}
         .shading{fill:url(#grad-cyl)}
       </style>
       <linearGradient id="grad-cyl" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" style="stop-color:#f1f5f9"/>
+        <stop offset="0%" style="stop-color:#f8fafc"/>
         <stop offset="50%" style="stop-color:#fff"/>
-        <stop offset="100%" style="stop-color:#f1f5f9"/>
+        <stop offset="100%" style="stop-color:#f8fafc"/>
       </linearGradient>
     </defs>
 
-    <text x="35" y="45" class="txt" style="font-size:16px">ENGINEERING ELEVATION</text>
-    <line x1="${cx}" y1="60" x2="${cx}" y2="${legBottomY+40}" class="center-line"/>
+    <text x="35" y="45" class="txt" style="font-size:16px">DETAILED ENGINEERING DRAWING</text>
+    <line x1="${cx}" y1="50" x2="${cx}" y2="${legBottomY+50}" class="center-line"/>
 
+    <!-- 1. Outer Shell with Beveled Top -->
+    <path d="M ${cx-rI} ${topY+20}
+             L ${cx-rO} ${topY+60}
+             L ${cx-rO} ${yBO}
+             A ${rO} ${dO} 0 0 0 ${cx+rO} ${yBO}
+             L ${cx+rO} ${topY+60}
+             L ${cx+rI} ${topY+20}" class="outer-line"/>
+
+    <!-- 2. Jacket Shell -->
+    <path d="M ${cx-rJ} ${topY+pxH(jacketClear)}
+             L ${cx-rJ} ${yBJ}
+             A ${rJ} ${dJ} 0 0 0 ${cx+rJ} ${yBJ}
+             L ${cx+rJ} ${topY+pxH(jacketClear)}" class="jacket-line"/>
+
+    <!-- 3. Inner Vessel -->
     <path d="M ${cx-rI} ${topY} L ${cx-rI} ${yBI} A ${rI} ${dI} 0 0 0 ${cx+rI} ${yBI} L ${cx+rI} ${topY}" class="primary"/>
-    <path d="M ${cx-rJ} ${topY+pxH(jacketClear)} L ${cx-rJ} ${yBJ} A ${rJ} ${dJ} 0 0 0 ${cx+rJ} ${yBJ} L ${cx+rJ} ${topY+pxH(jacketClear)}" class="jacket-line"/>
-    <path d="M ${cx-rO} ${topY+pxH(outerClear)} L ${cx-rO} ${yBO} A ${rO} ${dO} 0 0 0 ${cx+rO} ${yBO} L ${cx+rO} ${topY+pxH(outerClear)}" class="outer-line"/>
 
-    <rect x="${cx-rO-15}" y="${topY-4}" width="${rO*2+30}" height="6" class="primary"/>
+    <!-- Seams / Levels -->
+    <line x1="${cx-rI}" y1="${topY+hI*0.35}" x2="${cx+rI}" y2="${topY+hI*0.35}" class="seam"/>
+    <line x1="${cx-rI}" y1="${topY+hI*0.65}" x2="${cx+rI}" y2="${topY+hI*0.65}" class="seam"/>
+    <line x1="${cx-rI}" y1="${topY+hI*0.85}" x2="${cx+rI}" y2="${topY+hI*0.85}" class="seam"/>
 
-    <rect x="${cx-35}" y="${topY-110}" width="70" height="106" rx="2" class="primary"/>
-    <line x1="${cx-35}" y1="${topY-100}" x2="${cx+35}" y2="${topY-100}" class="primary"/>
-    <line x1="${cx-35}" y1="${topY-35}" x2="${cx+35}" y2="${topY-35}" class="primary"/>
-    ${[...Array(6)].map((_, i) => `<line x1="${cx-30+i*12}" y1="${topY-100}" x2="${cx-30+i*12}" y2="${topY-45}" class="dim-line"/>`).join('')}
-    <rect x="${cx-48}" y="${topY-95}" width="15" height="25" class="primary"/>
-    <text x="${cx+42}" y="${topY-75}" class="small-txt">Motor / Gearbox</text>
+    <!-- 4. Top Assembly -->
+    <rect x="${cx-rO-20}" y="${topY-5}" width="${rO*2+40}" height="8" class="primary"/>
 
-    <line x1="${cx}" y1="${topY-4}" x2="${cx}" y2="${yBI+dI-15}" class="primary" stroke-width="2.5"/>
-    ${impeller}
-
-    <rect x="${cx-rJ-45}" y="${topY+hJ*0.3}" width="45" height="18" class="primary"/>
-    <rect x="${cx-rJ-50}" y="${topY+hJ*0.3-4}" width="6" height="26" class="flange"/>
-    <text x="${cx-rJ-85}" y="${topY+hJ*0.3+13}" class="small-txt">Jacket In</text>
-
-    <rect x="${cx+rJ}" y="${yBJ-20}" width="45" height="18" class="primary"/>
-    <rect x="${cx+rJ+44}" y="${yBJ-24}" width="6" height="26" class="flange"/>
-    <text x="${cx+rJ+55}" y="${yBJ-7}" class="small-txt">Jacket Out</text>
-
-    <rect x="${cx-10}" y="${yBI+dI}" width="20" height="35" class="primary"/>
-    <rect x="${cx-14}" y="${yBI+dI+35}" width="28" height="6" class="flange"/>
-    <circle cx="${cx}" cy="${yBI+dI+55}" r="8" class="primary"/>
-    <line x1="${cx-12}" y1="${yBI+dI+55}" x2="${cx+12}" y2="${yBI+dI+55}" class="primary"/>
-    <text x="${cx+20}" y="${yBI+dI+50}" class="small-txt">Discharge</text>
-
-    <rect x="${legLeftX-legW/2}" y="${legTopY}" width="${legW}" height="${legH_px}" class="primary shading"/>
-    <rect x="${legRightX-legW/2}" y="${legTopY}" width="${legW}" height="${legH_px}" class="primary shading"/>
-    <rect x="${legLeftX-legW/2-10}" y="${legBottomY}" width="${legW+20}" height="6" class="flange"/>
-    <rect x="${legRightX-legW/2-10}" y="${legBottomY}" width="${legW+20}" height="6" class="flange"/>
-    <path d="M ${legLeftX+legW/2} ${legTopY+15} L ${legLeftX+legW/2+15} ${legTopY} L ${legLeftX+legW/2} ${legTopY}" class="dim-line"/>
-    <path d="M ${legRightX-legW/2} ${legTopY+15} L ${legRightX-legW/2-15} ${legTopY} L ${legRightX-legW/2} ${legTopY}" class="dim-line"/>
-
-    <g class="dim-line">
-      <line x1="${cx-rI}" y1="${topY+hI*0.5}" x2="${cx-rI-40}" y2="${topY+hI*0.5}" />
-      <line x1="${cx+rI}" y1="${topY+hI*0.5}" x2="${cx+rI+40}" y2="${topY+hI*0.5}" />
-      <line x1="${cx-rI}" y1="${topY+hI*0.5}" x2="${cx+rI}" y2="${topY+hI*0.5}" stroke-dasharray="2 2"/>
-      <text x="${cx}" y="${topY+hI*0.5-5}" text-anchor="middle" class="txt" style="fill:#3b82f6">ID Ø${innerD}</text>
+    <!-- Motor/Gearbox Segmented -->
+    <g id="motor-assembly">
+      <!-- Base Flange -->
+      <rect x="${cx-25}" y="${topY-20}" width="50" height="15" class="primary"/>
+      <!-- Gearbox -->
+      <rect x="${cx-20}" y="${topY-50}" width="40" height="30" class="primary shading"/>
+      <!-- Coupling -->
+      <rect x="${cx-15}" y="${topY-75}" width="30" height="25" class="primary"/>
+      <!-- Motor Body -->
+      <rect x="${cx-22}" y="${topY-145}" width="44" height="70" rx="3" class="primary shading"/>
+      ${[...Array(6)].map((_, i) => `<line x1="${cx-18+i*7}" y1="${topY-140}" x2="${cx-18+i*7}" y2="${topY-85}" class="dim-line"/>`).join('')}
+      <!-- Terminal Box -->
+      <rect x="${cx-32}" y="${topY-130}" width="10" height="18" class="primary"/>
+      <text x="${cx+30}" y="${topY-100}" class="small-txt">Agitator Drive</text>
     </g>
 
+    <!-- Agitator Shaft -->
+    <line x1="${cx}" y1="${topY+3}" x2="${cx}" y2="${yBI+dI-10}" class="primary" stroke-width="2.5"/>
+    <!-- Impeller (6 blades) -->
+    ${[...Array(6)].map((_, i) => {
+      const angle = (i/6)*Math.PI*2;
+      const x2 = cx + Math.cos(angle)*rI*0.7;
+      const y = yBI + dI*0.5 + Math.sin(angle)*5;
+      return `<line x1="${cx}" y1="${y}" x2="${x2}" y2="${y}" class="primary" stroke-width="2"/>`;
+    }).join('')}
+
+    <!-- 5. Nozzles & Valves -->
+    <!-- Jacket Inlet (Left Top) -->
+    <rect x="${cx-rO-50}" y="${topY+80}" width="50" height="14" class="primary"/>
+    <rect x="${cx-rO-55}" y="${topY+75}" width="6" height="24" class="flange"/>
+
+    <!-- Junction Box (Left Middle) -->
+    <rect x="${cx-rO-35}" y="${topY+hI*0.4}" width="18" height="35" class="primary shading"/>
+
+    <!-- Jacket Outlet + Ball Valve (Left Bottom) -->
+    <g transform="translate(${cx-rO-65}, ${yBJ-40})">
+      <rect x="15" y="5" width="50" height="12" class="primary"/>
+      <rect x="5" y="0" width="10" height="22" class="flange"/>
+      <!-- Valve Body -->
+      <rect x="25" y="0" width="15" height="22" rx="2" class="primary"/>
+      <!-- Valve Handle -->
+      <line x1="32" y1="0" x2="32" y2="-25" class="primary" stroke-width="2"/>
+      <circle cx="32" cy="-25" r="3" class="primary" fill="#0f172a"/>
+    </g>
+
+    <!-- Bottom Discharge + Wheel Valve -->
+    <g transform="translate(${cx}, ${yBI+dI})">
+      <rect x="-8" y="0" width="16" height="30" class="primary"/>
+      <rect x="-12" y="30" width="24" height="6" class="flange"/>
+      <!-- Wheel Valve -->
+      <rect x="-10" y="45" width="20" height="15" rx="1" class="primary"/>
+      <circle cx="0" cy="65" r="7" class="primary"/>
+      <line x1="-10" y1="65" x2="10" y2="65" class="primary"/>
+      <line x1="0" y1="58" x2="0" y2="72" class="primary"/>
+    </g>
+
+    <!-- 6. Supports (Legs) -->
+    <g id="legs">
+      <!-- Left Leg -->
+      <rect x="${legLeftX-legW/2}" y="${legTopY}" width="${legW}" height="${legH_px}" class="primary shading"/>
+      <line x1="${legLeftX}" y1="${legTopY+5}" x2="${legLeftX}" y2="${legBottomY-5}" class="seam"/>
+      <rect x="${legLeftX-legW/2-8}" y="${legBottomY}" width="${legW+16}" height="6" class="flange"/>
+
+      <!-- Right Leg + Structural Gusset -->
+      <rect x="${legRightX-legW/2}" y="${legTopY}" width="${legW}" height="${legH_px}" class="primary shading"/>
+      <line x1="${legRightX}" y1="${legTopY+5}" x2="${legRightX}" y2="${legBottomY-5}" class="seam"/>
+      <rect x="${legRightX-legW/2-8}" y="${legBottomY}" width="${legW+16}" height="6" class="flange"/>
+      <!-- Gusset Plate -->
+      <path d="M ${legRightX-legW/2} ${legTopY+30}
+               L ${legRightX-legW/2-35} ${legTopY-15}
+               L ${legRightX-legW/2} ${legTopY-15} Z" class="seam" fill="#f1f5f9"/>
+    </g>
+
+    <!-- Dimensions (Styled) -->
+    <g transform="translate(0, ${topY+hI*0.5})">
+      <line x1="${cx-rI}" y1="0" x2="${cx-rI-60}" y2="0" class="dim-line"/>
+      <line x1="${cx+rI}" y1="0" x2="${cx+rI+60}" y2="0" class="dim-line"/>
+      <text x="${cx}" y="-8" text-anchor="middle" class="txt" style="fill:#3b82f6; font-size:13px">INSIDE Ø${innerD}</text>
+      <line x1="${cx-rI}" y1="0" x2="${cx+rI}" y2="0" class="dim-line" stroke-dasharray="2 2"/>
+    </g>
+
+    <!-- TOP VIEW (Matching Drawing) -->
     <g transform="translate(0,0)">
-      <text x="${tvx-50}" y="45" class="txt" style="font-size:16px">PLAN VIEW</text>
+      <text x="${tvx-50}" y="50" class="txt" style="font-size:16px">PLAN VIEW</text>
       <circle cx="${tvx}" cy="${tvy}" r="${tvO}" class="outer-line"/>
       <circle cx="${tvx}" cy="${tvy}" r="${tvJ}" class="jacket-line"/>
       <circle cx="${tvx}" cy="${tvy}" r="${tvI}" class="primary"/>
 
-      <circle cx="${tvx}" cy="${tvy}" r="${tvI*0.1}" class="primary"/>
+      <!-- Agitator Center -->
+      <circle cx="${tvx}" cy="${tvy}" r="${tvI*0.12}" class="primary shading"/>
       ${[...Array(6)].map((_, i) => {
         const angle = (i/6)*Math.PI*2;
-        const x2 = tvx + Math.cos(angle)*tvI*0.8;
-        const y2 = tvy + Math.sin(angle)*tvI*0.8;
+        const x2 = tvx + Math.cos(angle)*tvI*0.85;
+        const y2 = tvy + Math.sin(angle)*tvI*0.85;
         return `<line x1="${tvx}" y1="${tvy}" x2="${x2}" y2="${y2}" class="primary" stroke-width="2"/>`;
       }).join('')}
 
-      <line x1="${tvx-tvO-30}" y1="${tvy}" x2="${tvx+tvO+30}" y2="${tvy}" class="center-line"/>
-      <line x1="${tvx}" y1="${tvy-tvO-30}" x2="${tvx}" y2="${tvy+tvO+30}" class="center-line"/>
+      <line x1="${tvx-tvO-40}" y1="${tvy}" x2="${tvx+tvO+40}" y2="${tvy}" class="center-line"/>
+      <line x1="${tvx}" y1="${tvy-tvO-40}" x2="${tvx}" y2="${tvy+tvO+40}" class="center-line"/>
 
-      <rect x="${tvx-tvJ-15}" y="${tvy-6}" width="15" height="12" class="primary"/>
-      <rect x="${tvx+tvJ}" y="${tvy-6}" width="15" height="12" class="primary"/>
+      <!-- Plan Nozzle Details -->
+      <rect x="${tvx-tvO-35}" y="${tvy-7}" width="35" height="14" class="primary"/>
+      <rect x="${tvx-tvO-40}" y="${tvy-10}" width="5" height="20" class="flange"/>
+
+      <rect x="${tvx+tvO}" y="${tvy-7}" width="35" height="14" class="primary"/>
+      <rect x="${tvx+tvO+30}" y="${tvy-10}" width="5" height="20" class="flange"/>
     </g>
     `;
   }
@@ -763,6 +814,7 @@
     localStorage.setItem('veerPharmaCalc_v2', JSON.stringify(obj));
     alert('Project state saved successfully.');
   }
+
   function loadData(){
     try{
       const obj = JSON.parse(localStorage.getItem('veerPharmaCalc_v2') || '{}');
